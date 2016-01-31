@@ -13,6 +13,7 @@ class Dice {
     }
     return rolls;
   }
+
 }
 
 export = Dice;
