@@ -20,9 +20,10 @@
         "!node_modules/**"
     ],
     "compileOnSave": true,
-    "buildOnSave": false,
+    "buildOnSave": true,
     "files": [
-        "dice.ts"
+        "Dice.ts",
+        "test01.ts"
     ],
     "atom": {
         "rewriteTsconfig": true

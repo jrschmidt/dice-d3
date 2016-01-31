@@ -1,0 +1,10 @@
+"use strict";
+var Dice = require('./Dice');
+console.log("FROM test01.ts via the 'Dice' module");
+var die = new Dice();
+var xx = die.roll(1);
+var yy = die.roll(5);
+var zz = die.roll(3);
+console.log(xx);
+console.log(yy);
+console.log(zz);
