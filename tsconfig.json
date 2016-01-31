@@ -23,7 +23,8 @@
     "buildOnSave": true,
     "files": [
         "Dice.ts",
-        "test01.ts"
+        "test01.ts",
+        "test02.ts"
     ],
     "atom": {
         "rewriteTsconfig": true

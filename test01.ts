@@ -5,11 +5,11 @@ import Dice = require('./Dice');
 
 console.log("FROM test01.ts via the 'Dice' module");
 
-var die = new Dice();
+var dice = new Dice();
 
-var xx: number[] = die.roll(1);
-var yy: number[] = die.roll(5);
-var zz: number[] = die.roll(3);
+var xx: number[] = dice.roll(1);
+var yy: number[] = dice.roll(5);
+var zz: number[] = dice.roll(3);
 
 console.log(xx);
 console.log(yy);
