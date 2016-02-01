@@ -23,6 +23,7 @@
     "buildOnSave": true,
     "files": [
         "Dice.ts",
+        "RDBtest01.ts",
         "RiskDiceBattle.ts",
         "test01.ts",
         "test02.ts"
