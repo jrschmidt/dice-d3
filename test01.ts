@@ -3,14 +3,17 @@
 
 import Dice = require('./Dice');
 
-console.log("FROM test01.ts via the 'Dice' module");
+console.log("RUNNING test01 for 'Dice' module");
+console.log("test of roll() function");
 
-var dice = new Dice();
+let dice = new Dice();
 
-var xx: number[] = dice.roll(1);
-var yy: number[] = dice.roll(5);
-var zz: number[] = dice.roll(3);
+let xx: number[] = dice.roll(1);
+let yy: number[] = dice.roll(5);
+let zz: number[] = dice.roll(3);
 
-console.log(xx);
-console.log(yy);
-console.log(zz);
+console.log(" ");
+console.log("  1 die was rolled:    " + xx);
+console.log("  5 dice were rolled:  " + yy);
+console.log("  3 dice were rolled:  " + zz);
+console.log(" ");

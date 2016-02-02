@@ -4,25 +4,25 @@
 import Dice = require('./Dice');
 
 console.log("RUNNING test02 for 'Dice' module");
+console.log("test of roll() function");
 
-var dice = new Dice();
+let dice = new Dice();
 
 const runs = 600;
-var hits = [0,0,0,0,0,0,0];
-var n: number;
+let hits = [0,0,0,0,0,0,0];
+let n: number;
 
-for (var i = 0; i < runs; i++) {
-  var dd = dice.roll(10);
-  for (var j = 0; j < 10; j++) {
+for (let i = 0; i < runs; i++) {
+  let dd = dice.roll(10);
+  for (let j = 0; j < 10; j++) {
     n = dd[j];
     hits[n] = hits[n] + 1;
   }
 }
 
-console.log(' ');
-console.log(' ');
-console.log('   10 dice were rolled 600 times for a total of 6000 dice rolls.');
-for (var nn = 1; nn < 7; nn++) {
-  console.log('     ' + nn + ' was rolled ' + hits[nn] + ' times.');
+console.log(" ");
+console.log("   10 dice were rolled 600 times for a total of 6000 dice rolls.");
+for (let nn = 1; nn < 7; nn++) {
+  console.log("     " + nn + " was rolled " + hits[nn] + " times.");
 }
-console.log(' ');
+console.log(" ");

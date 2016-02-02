@@ -22,8 +22,10 @@
     "compileOnSave": true,
     "buildOnSave": true,
     "files": [
+        "astring.ts",
         "Dice.ts",
         "RDBtest01.ts",
+        "RDBtest02.ts",
         "RiskDiceBattle.ts",
         "test01.ts",
         "test02.ts"
