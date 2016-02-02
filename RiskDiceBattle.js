@@ -5,18 +5,17 @@ var RiskDiceBattle = (function () {
     function RiskDiceBattle() {
     }
     RiskDiceBattle.prototype.battle = function (attStartingArmies, defStartingArmies) {
+        var attArmies = attStartingArmies;
+        var defArmies = defStartingArmies;
         var dice = [];
         var result = [];
         var rolls = [];
         var armies = [];
-        dice = [3, 2];
-        result = [1, 2];
-        rolls = [
-            { attRolls: [4, 2, 1], defRolls: [5, 3], loss: [2, 0] },
-            { attRolls: [6], defRolls: [4, 4], loss: [0, 1] },
-            { attRolls: [3], defRolls: [6, 2], loss: [1, 0] }];
-        armies = [[2, 3], [2, 2], [1, 2]];
-        return { dice: dice, result: result, rolls: rolls, armies: armies };
+        while ((attArmies > 1) && (defArmies > 0)) {
+            var attNumberOfDice = this.getAttNumberOfDice(this);
+            var defNumberOfDice = this.getDefNumberOfDice(this);
+        }
+        return { result: result, rolls: rolls };
     };
     RiskDiceBattle.prototype.battleOnce = function (attDice, defDice) {
         var losses = [0, 0];
@@ -37,6 +36,22 @@ var RiskDiceBattle = (function () {
             }
         }
         return { attRoll: aRolls, defRoll: dRolls, loss: losses };
+    };
+    RiskDiceBattle.prototype.getAttNumberOfDice = function (app) {
+        app = app;
+        if (app.attArmies > 2)
+            return 3;
+        else if (app.attArmies === 2)
+            return 2;
+        else
+            return 1;
+    };
+    RiskDiceBattle.prototype.getDefNumberOfDice = function (app) {
+        app = app;
+        if (app.defArmies > 1)
+            return 2;
+        else
+            return 1;
     };
     return RiskDiceBattle;
 })();

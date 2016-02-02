@@ -11,10 +11,12 @@ results = riskBattle.battle(greenArmies, redArmies);
 reportResults(results);
 function reportResults(results) {
     console.log("");
-    console.log("Green has " + astr(greenArmies) + " and attacks Red with " + dstr(results.dice[0]));
-    console.log("Red has " + astr(redArmies) + " and defends with " + dstr(results.dice[1]));
+    console.log("Green has " + astr(greenArmies));
+    console.log("Red has " + astr(redArmies));
     console.log("");
     for (var i = 0; i < results.rolls.length; i++) {
+        console.log("Green attacks Red with " + dstr(results.rolls[i].dice[0]));
+        console.log("Red defends with " + dstr(results.rolls[i].dice[1]));
         console.log("Green rolls  " + results.rolls[i].attRolls);
         console.log("Red rolls  " + results.rolls[i].defRolls);
         if (results.rolls[i].loss[0] > 0)
