@@ -51,8 +51,9 @@
 //
 //   returns: { result: [], rolls: [] }
 //
-//   result[] contains the number of armies the two antagonists have remaining
-//   after the battle (Attacker first).
+//   result[] contains the number of armies each antagonist has remaining after
+//   the battle (Attacker first). This is a deliberate redunancy to provide the
+//   final result without accessing the array of individual roll data.
 //
 //   rolls[] contains objects with information for each roll. These objects
 //   consist of the  data returned from the battle() function as it is
@@ -73,37 +74,45 @@
 
 import Dice = require('./Dice');
 
-var dice = new Dice();
+var diceRoller = new Dice();
 
 
 class RiskDiceBattle {
 
-
   battle(attStartingArmies: number, defStartingArmies: number) {
     let attArmies:number = attStartingArmies;
     let defArmies:number = defStartingArmies;
-
-    let dice: number[] = [];
-    let result: number[] = [];
     let rolls: Object[] = [];
-    let armies: number[][] = [];
+    let armiesRemaining: number[];
 
-
-
-
+    // Loop for each set of dice rolls:
     while ( (attArmies > 1) && (defArmies > 0) ) {
-      let attNumberOfDice: number = this.getAttNumberOfDice(this);
-      let defNumberOfDice: number = this.getDefNumberOfDice(this);
+      let attNumberOfDice: number = this.getAttNumberOfDice(attArmies);
+      let defNumberOfDice: number = this.getDefNumberOfDice(defArmies);
+      let roll = this.battleOnce(attNumberOfDice, defNumberOfDice);
+
+      attArmies = attArmies - roll.loss[0];
+      defArmies = defArmies - roll.loss[1];
+      armiesRemaining = [attArmies, defArmies];
+
+      let rollInfo = {
+        dice: [attNumberOfDice, defNumberOfDice],
+        attRolls: roll.attRoll,
+        defRolls: roll.defRoll,
+        loss: roll.loss,
+        armies: armiesRemaining
+      };
+      rolls.push(rollInfo);
     }
 
-    return {result: result, rolls: rolls}
+    return {result: armiesRemaining, rolls: rolls}
   }
 
 
   battleOnce(attDice: number, defDice: number) {
     let losses = [0, 0];
-    let aRolls = dice.roll(attDice).sort().reverse();
-    let dRolls = dice.roll(defDice).sort().reverse();
+    let aRolls = diceRoller.roll(attDice).sort().reverse();
+    let dRolls = diceRoller.roll(defDice).sort().reverse();
 
     if (aRolls[0] > dRolls[0])
       {losses[1] ++}
@@ -121,21 +130,19 @@ class RiskDiceBattle {
     return {attRoll: aRolls, defRoll: dRolls, loss: losses};
   }
 
-  private getAttNumberOfDice(app: any) {
-    app = app;
-    if (app.attArmies > 2)
+  private getAttNumberOfDice(armies: number): number {
+    if (armies > 3)
       return 3;
     else
-      if (app.attArmies === 2)
+      if (armies > 2)
         return 2;
       else
         return 1;
   }
 
 
-  private getDefNumberOfDice(app: any) {
-    app = app;
-    if (app.defArmies > 1)
+  private getDefNumberOfDice(armies: number): number {
+    if (armies > 1)
       return 2;
     else
       return 1;

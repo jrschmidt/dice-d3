@@ -17,8 +17,6 @@ reportResults(results);
 
 
 function reportResults(results) {
-  console.log("");
-
   console.log("Green has " + astr(greenArmies) );
   console.log("Red has " + astr(redArmies) );
   console.log("")
@@ -32,8 +30,8 @@ function reportResults(results) {
       console.log("Green loses " + astr(results.rolls[i].loss[0]) );
     if (results.rolls[i].loss[1] > 0)
       console.log("Red loses " + astr(results.rolls[i].loss[1]) );
-    console.log("Green has " + astr(results.armies[i][0]) + " left");
-    console.log("Red has " + astr(results.armies[i][1]) + " left");
+    console.log("Green has " + astr(results.rolls[i].armies[0]) + " left");
+    console.log("Red has " + astr(results.rolls[i].armies[1]) + " left");
     console.log("");
   }
 
@@ -63,11 +61,11 @@ function dstr(n: number): string {
 }
 
 function astr(n: number): string {
-  if (n === 1)
-    return '1 army';
+  if (n > 1)
+    return n + ' armies';
   else
-    if (n === 0)
+    if (n < 1)
       return 'no armies';
     else
-      return n + ' armies';
+      return '1 army';
 }
