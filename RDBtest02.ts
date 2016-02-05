@@ -1,6 +1,9 @@
 // A test for the battle() function in module RiskDiceBattle.
 // jrs 2016
 
+// Call with number of armies for Attacker and Defender like this:
+// node RDBtest02.ts
+
 import RiskDiceBattle = require('./RiskDiceBattle');
 
 let greenArmies: number = process.argv[2];
