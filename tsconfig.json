@@ -23,6 +23,7 @@
     "buildOnSave": true,
     "files": [
         "Dice.ts",
+        "jsd3-01.ts",
         "RDBtest01.ts",
         "RDBtest02.ts",
         "RDBtest03.ts",
