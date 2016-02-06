@@ -29,14 +29,16 @@ function render(data) {
     console.log('d = ' + d);
     return (d * 3) + 'px';
   })
-  .style('min-height', '12px')
+  .style('padding-top', '4px')
+  .style('padding-bottom', '4px')
   .style('font-family', 'sans')
-  .style('font-size', '0.8em')
+  .style('font-size', '0.6em')
+
   .select('span')
-    .text(function (d) {
-      console.log('d = ' + d);
-      return d;
-    });
+  .text(function (d) {
+    console.log('d = ' + d);
+    return d;
+  });
 
   // Exit
   d3.select('body').selectAll('div.h-bar')
