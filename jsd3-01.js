@@ -1,3 +1,7 @@
+// First D3 app
+// jrs 2016
+
+
 var data = [10, 15, 30, 50, 80, 65, 55, 30, 20, 10, 8];
 var oddeven = 0;
 var barColor = '#aacccc';
