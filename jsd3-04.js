@@ -32,14 +32,20 @@ render(data);
 
 function render(data) {
 
-  // // Enter
-  // d3.select('body').selectAll('circle')
-  // .data(data)
-  // .enter();
-
-
-
   // Update
+  svg.selectAll('green-dot')
+    .data(data)
+    .enter()
+    .append('circle')
+    .attr('cx', function (d) {
+      return 25 + 50 * d[0];
+    })
+    .attr('cy', function (d) {
+      return 275 - 50 * d[1];
+    })
+    .style('fill', '#669966')
+    .attr('r', 19);
+
   svg.selectAll('red-dot')
     .data(data)
     .enter()
@@ -52,13 +58,8 @@ function render(data) {
       return 275 - 50 * d[1];
     })
     .attr('r', function (d) {
-      return Math.floor(d[2] * 0.19 + 0.5);
-  });
+      return d[2] * 0.19;
+      // return Math.floor(d[2] * 0.19 + 0.5);
+    });
 
-
-  // // Exit
-  // d3.select('body').selectAll('circle')
-  // .data(data)
-  // .exit()
-  // .remove();
   }
