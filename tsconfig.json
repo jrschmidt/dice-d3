@@ -23,9 +23,11 @@
     "buildOnSave": true,
     "files": [
         "Dice.ts",
+        "RDBEstimateOdds.ts",
         "RDBtest01.ts",
         "RDBtest02.ts",
         "RDBtest03.ts",
+        "RDBtest04.ts",
         "RiskDiceBattle.ts",
         "test01.ts",
         "test02.ts"
