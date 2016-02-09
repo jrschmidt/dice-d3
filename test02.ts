@@ -8,12 +8,12 @@ console.log("test of roll() function");
 
 let dice = new Dice();
 
-const runs = 600;
-let hits = [0,0,0,0,0,0,0];
+const runs: number = 600;
+let hits: number[] = [0,0,0,0,0,0,0];
 let n: number;
 
 for (let i = 0; i < runs; i++) {
-  let dd = dice.roll(10);
+  let dd: number[] = dice.roll(10);
   for (let j = 0; j < 10; j++) {
     n = dd[j];
     hits[n] = hits[n] + 1;

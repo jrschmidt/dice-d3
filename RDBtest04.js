@@ -12,9 +12,9 @@ results = estOdds.run(greenArmies, redArmies, numberOfTests);
 var ratio = results[0] / numberOfTests;
 var percentage = ratio * 100;
 console.log("Running " + numberOfTests + " tests with " + astr(greenArmies) + " attacking " + astr(redArmies));
-console.log("   Attacker won " + results[0] + "times");
-console.log("   Defender won " + results[1] + "times");
-console.log("   Attacker won " + percentage + "percent of the time");
+console.log("   Attacker won " + results[0] + " times");
+console.log("   Defender won " + results[1] + " times");
+console.log("   Attacker won " + percentage + " percent of the time");
 console.log("");
 console.log("");
 function astr(armies) {
