@@ -24,53 +24,68 @@ var data = [
 ];
 
 
+// Axes
+var attArmies = d3.scale.ordinal()
+  .domain( [2, 3, 4, 5, 6, 7, 8] )
+  .range( [125, 175, 225, 275, 325, 375, 425] );
+
+var defArmies = d3.scale.ordinal()
+  .domain( [4, 3, 2, 1] )
+  .range( [75, 125, 175, 225] );
+
+var axisAtt = d3.svg.axis()
+  .scale(attArmies)
+  .orient('bottom')
+  .tickValues( [2, 3, 4, 5, 6, 7, 8] );
+
+var axisDef = d3.svg.axis()
+  .scale(defArmies)
+  .orient('left')
+  .tickValues( [4, 3, 2, 1] );
 
 
-  // Axes
-  var attArmies = d3.scale.ordinal()
-    .domain( [2, 3, 4, 5, 6, 7, 8] )
-    .range( [125, 175, 225, 275, 325, 375, 425] );
+// SVG
+var svg = d3.select('body')
+.append("svg")
+.attr('width', 500)
+.attr('height', 300);
 
-  var axisAtt = d3.svg.axis()
-    .scale(attArmies)
-    .orient('bottom')
-    .tickValues( [2, 3, 4, 5, 6, 7, 8] );
 
-  var svg = d3.select('body')
-  .append("svg")
-  .attr('width', 500)
-  .attr('height', 300);
+// Update
+svg.selectAll('green-dot')
+  .data(data)
+  .enter()
+  .append('circle')
+  .attr('cx', function (d) {
+    return 25 + 50 * d[0];
+  })
+  .attr('cy', function (d) {
+    return 275 - 50 * d[1];
+  })
+  .style('fill', '#669966')
+  .attr('r', 19);
 
-  // Update
-  svg.selectAll('green-dot')
-    .data(data)
-    .enter()
-    .append('circle')
-    .attr('cx', function (d) {
-      return 25 + 50 * d[0];
-    })
-    .attr('cy', function (d) {
-      return 275 - 50 * d[1];
-    })
-    .style('fill', '#669966')
-    .attr('r', 19);
+svg.selectAll('red-dot')
+  .data(data)
+  .enter()
+  .append('circle')
+  .style('fill', '#cc6666')
+  .attr('cx', function (d) {
+    return 25 + 50 * d[0];
+  })
+  .attr('cy', function (d) {
+    return 275 - 50 * d[1];
+  })
+  .attr('r', function (d) {
+    return d[2] * 0.19;
+  });
 
-  svg.selectAll('red-dot')
-    .data(data)
-    .enter()
-    .append('circle')
-    .style('fill', '#cc6666')
-    .attr('cx', function (d) {
-      return 25 + 50 * d[0];
-    })
-    .attr('cy', function (d) {
-      return 275 - 50 * d[1];
-    })
-    .attr('r', function (d) {
-      return d[2] * 0.19;
-    });
+svg.append("g")
+.attr("class", "axis-att")
+.attr("transform", "translate(0, 275)")
+.call(axisAtt);
 
-  svg.append("g")
-  .attr("class", "axis-att")
-  .attr("transform", "translate(0, 275)")
-  .call(axisAtt);
+svg.append("g")
+.attr("class", "axis-def")
+.attr("transform", "translate(75, 0)")
+.call(axisDef);
