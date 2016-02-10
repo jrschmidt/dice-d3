@@ -59,7 +59,6 @@ function render(data) {
     })
     .attr('r', function (d) {
       return d[2] * 0.19;
-      // return Math.floor(d[2] * 0.19 + 0.5);
     });
 
   }

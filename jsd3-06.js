@@ -1,3 +1,5 @@
+// Adding axes to the chart in jsd3-05.
+//
 // Same graph as jsd3-04, but with real data. Each scenario in the data set
 // (4 armies attacking 3 armies, etc.) was run 100,000 times using RDBtest04.
 // jrs 2016
@@ -22,15 +24,22 @@ var data = [
 ];
 
 
-var svg = d3.select('body')
+
+
+  // Axes
+  var attArmies = d3.scale.ordinal()
+    .domain( [2, 3, 4, 5, 6, 7, 8] )
+    .range( [125, 175, 225, 275, 325, 375, 425] );
+
+  var axisAtt = d3.svg.axis()
+    .scale(attArmies)
+    .orient('bottom')
+    .tickValues( [2, 3, 4, 5, 6, 7, 8] );
+
+  var svg = d3.select('body')
   .append("svg")
   .attr('width', 500)
   .attr('height', 300);
-
-render(data);
-
-
-function render(data) {
 
   // Update
   svg.selectAll('green-dot')
@@ -61,4 +70,7 @@ function render(data) {
       return d[2] * 0.19;
     });
 
-  }
+  svg.append("g")
+  .attr("class", "axis-att")
+  .attr("transform", "translate(0, 275)")
+  .call(axisAtt);
