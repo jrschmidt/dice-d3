@@ -24,7 +24,7 @@ var data = [
 ];
 
 
-// Axes
+// Define Axes
 var attArmies = d3.scale.ordinal()
   .domain( [2, 3, 4, 5, 6, 7, 8] )
   .range( [125, 175, 225, 275, 325, 375, 425] );
@@ -46,9 +46,9 @@ var axisDef = d3.svg.axis()
 
 // SVG
 var svg = d3.select('body')
-.append("svg")
+.append('svg')
 .attr('width', 500)
-.attr('height', 300);
+.attr('height', 320);
 
 
 // Update
@@ -56,6 +56,7 @@ svg.selectAll('green-dot')
   .data(data)
   .enter()
   .append('circle')
+  .attr('class', 'green-dot')
   .attr('cx', function (d) {
     return 25 + 50 * d[0];
   })
@@ -69,6 +70,7 @@ svg.selectAll('red-dot')
   .data(data)
   .enter()
   .append('circle')
+  .attr('class', 'red-dot')
   .style('fill', '#cc6666')
   .attr('cx', function (d) {
     return 25 + 50 * d[0];
@@ -80,12 +82,42 @@ svg.selectAll('red-dot')
     return d[2] * 0.19;
   });
 
-svg.append("g")
-.attr("class", "axis-att")
-.attr("transform", "translate(0, 275)")
-.call(axisAtt);
 
-svg.append("g")
-.attr("class", "axis-def")
-.attr("transform", "translate(75, 0)")
-.call(axisDef);
+// Render Axes
+svg.append('g')
+.attr('class', 'axis-att')
+.attr('transform', 'translate(0, 250)')
+.style('font', 'bold 22px sans-serif')
+.style('stroke', '#669966')
+.style('fill', '#669966')
+.call(axisAtt)
+.append('text')
+  .attr('x', 150)
+  .attr('y', 50)
+  .text('Attacking Armies');
+
+defAxisRender = svg.append('g')
+  .attr('class', 'axis-def')
+  .attr('transform', 'translate(100, 0)')
+  .style('font', 'bold 22px sans-serif')
+  .style('stroke', '#cc6666')
+  .style('fill', '#cc6666')
+  .call(axisDef);
+
+svg.append('text')
+  .attr("transform", "rotate(-90)")
+  .attr('x', -220)
+  .attr('y', 40)
+  .style('font', 'bold 22px sans-serif')
+  .style('stroke', '#cc6666')
+  .style('fill', '#cc6666')
+  .text('Defending');
+
+svg.append('text')
+  .attr("transform", "rotate(-90)")
+  .attr('x', -200)
+  .attr('y', 65)
+  .style('font', 'bold 22px sans-serif')
+  .style('stroke', '#cc6666')
+  .style('fill', '#cc6666')
+  .text('Armies');
