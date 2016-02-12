@@ -32,6 +32,15 @@ var svg = d3.select('body')
   .style('border', '5px solid #666666');
 
 
+// Caption
+var topCaptions = svg.append('text')
+  .attr('x', 50)
+  .attr('y', 30)
+  .style('font', '16px sans-serif')
+  .style('stroke', '#666666')
+  .text('Risk-style Dice Battles - odds of Attacker prevailing');
+
+
 // Define Axes
 var attArmiesScale = d3.scale.ordinal()
   .domain( [2, 3, 4, 5, 6, 7, 8] )
@@ -54,27 +63,27 @@ var axisDef = d3.svg.axis()
 var attAxisRender = svg.append('g')
   .attr('class', 'axis-att')
   .attr('transform', 'translate(0, 250)')
-  .style('font', 'bold 22px sans-serif')
+  .style('font', 'bold 18px sans-serif')
   .style('stroke', '#669966')
   .style('fill', '#669966')
   .call(axisAtt);
 
 attAxisRender.append('text')
-  .attr('x', 150)
-  .attr('y', 50)
+  .attr('x', 190)
+  .attr('y', 40)
   .text('Attacking Armies');
 
 
 var defAxisRender = svg.append('g')
   .attr('class', 'axis-def')
   .attr('transform', 'translate(100, 0)')
-  .style('font', 'bold 22px sans-serif')
+  .style('font', 'bold 18px sans-serif')
   .style('stroke', '#cc6666')
   .style('fill', '#cc6666')
   .call(axisDef);
 
 var defAxisText = defAxisRender.append('g')
-  .attr('transform', 'translate(-60, 220), rotate(-90)');
+  .attr('transform', 'translate(-50, 200), rotate(-90)');
 
 defAxisText.append('text')
   .attr('x', 0)
@@ -83,7 +92,7 @@ defAxisText.append('text')
 
 defAxisText.append('text')
   .attr('x', 20)
-  .attr('y', 25)
+  .attr('y', 20)
   .text('Armies');
 
 
