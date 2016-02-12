@@ -4,8 +4,8 @@
 //
 // In this graph, green is the attacker and red is the defender.
 //
-// Each bubble, at position (a,d) on the graph, represents the odds of the defender
-// prevailing if attacker has (a) armies and defender has (d) armies.
+// Each bubble, at position (a,d) on the graph, represents the odds of the
+// attacker prevailing if attacker has (a) armies and defender has (d) armies.
 //
 // The bubbles start with a green circle with radius 100%. A red bubble is
 // superimposed on each green circle. The radius of each red bubble is computed

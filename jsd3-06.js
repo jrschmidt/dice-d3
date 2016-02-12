@@ -6,8 +6,8 @@
 //
 // In this graph, green is the attacker and red is the defender.
 //
-// Each bubble, at position (a,d) on the graph, represents the odds of the defender
-// prevailing if attacker has (a) armies and defender has (d) armies.
+// Each bubble, at position (a,d) on the graph, represents the odds of the
+// attacker prevailing if attacker has (a) armies and defender has (d) armies.
 //
 // The bubbles start with a green circle with radius 100%. A red bubble is
 // superimposed on each green circle. The radius of each red bubble is computed
@@ -24,31 +24,67 @@ var data = [
 ];
 
 
+// SVG
+var svg = d3.select('body')
+  .append('svg')
+  .attr('width', 500)
+  .attr('height', 320)
+  .style('border', '5px solid #666666');
+
+
 // Define Axes
-var attArmies = d3.scale.ordinal()
+var attArmiesScale = d3.scale.ordinal()
   .domain( [2, 3, 4, 5, 6, 7, 8] )
   .range( [125, 175, 225, 275, 325, 375, 425] );
 
-var defArmies = d3.scale.ordinal()
+var defArmiesScale = d3.scale.ordinal()
   .domain( [4, 3, 2, 1] )
   .range( [75, 125, 175, 225] );
 
 var axisAtt = d3.svg.axis()
-  .scale(attArmies)
-  .orient('bottom')
-  .tickValues( [2, 3, 4, 5, 6, 7, 8] );
+  .scale(attArmiesScale)
+  .orient('bottom');
 
 var axisDef = d3.svg.axis()
-  .scale(defArmies)
-  .orient('left')
-  .tickValues( [4, 3, 2, 1] );
+  .scale(defArmiesScale)
+  .orient('left');
 
 
-// SVG
-var svg = d3.select('body')
-.append('svg')
-.attr('width', 500)
-.attr('height', 320);
+// Render Axes
+var attAxisRender = svg.append('g')
+  .attr('class', 'axis-att')
+  .attr('transform', 'translate(0, 250)')
+  .style('font', 'bold 22px sans-serif')
+  .style('stroke', '#669966')
+  .style('fill', '#669966')
+  .call(axisAtt);
+
+attAxisRender.append('text')
+  .attr('x', 150)
+  .attr('y', 50)
+  .text('Attacking Armies');
+
+
+var defAxisRender = svg.append('g')
+  .attr('class', 'axis-def')
+  .attr('transform', 'translate(100, 0)')
+  .style('font', 'bold 22px sans-serif')
+  .style('stroke', '#cc6666')
+  .style('fill', '#cc6666')
+  .call(axisDef);
+
+var defAxisText = defAxisRender.append('g')
+  .attr('transform', 'translate(-60, 220), rotate(-90)');
+
+defAxisText.append('text')
+  .attr('x', 0)
+  .attr('y', 0)
+  .text('Defending');
+
+defAxisText.append('text')
+  .attr('x', 20)
+  .attr('y', 25)
+  .text('Armies');
 
 
 // Update
@@ -81,43 +117,3 @@ svg.selectAll('red-dot')
   .attr('r', function (d) {
     return d[2] * 0.19;
   });
-
-
-// Render Axes
-svg.append('g')
-.attr('class', 'axis-att')
-.attr('transform', 'translate(0, 250)')
-.style('font', 'bold 22px sans-serif')
-.style('stroke', '#669966')
-.style('fill', '#669966')
-.call(axisAtt)
-.append('text')
-  .attr('x', 150)
-  .attr('y', 50)
-  .text('Attacking Armies');
-
-defAxisRender = svg.append('g')
-  .attr('class', 'axis-def')
-  .attr('transform', 'translate(100, 0)')
-  .style('font', 'bold 22px sans-serif')
-  .style('stroke', '#cc6666')
-  .style('fill', '#cc6666')
-  .call(axisDef);
-
-svg.append('text')
-  .attr("transform", "rotate(-90)")
-  .attr('x', -220)
-  .attr('y', 40)
-  .style('font', 'bold 22px sans-serif')
-  .style('stroke', '#cc6666')
-  .style('fill', '#cc6666')
-  .text('Defending');
-
-svg.append('text')
-  .attr("transform", "rotate(-90)")
-  .attr('x', -200)
-  .attr('y', 65)
-  .style('font', 'bold 22px sans-serif')
-  .style('stroke', '#cc6666')
-  .style('fill', '#cc6666')
-  .text('Armies');
