@@ -126,3 +126,21 @@ svg.selectAll('red-dot')
   .attr('r', function (d) {
     return d[2] * 0.19;
   });
+
+svg.selectAll('percent-text')
+  .data(data)
+  .enter()
+  .append('text')
+  .attr('class', 'percent-text')
+  .style('stroke', '#333333')
+  .style('font', '9px sans-serif')
+  .style('text-anchor', 'middle')
+  .attr('x', function (d) {
+    return 25 + 50 * d[0];
+  })
+  .attr('y', function (d) {
+    return 275 - 50 * d[1]
+  })
+  .text( function (d) {
+    return d[2] + '%';
+  });
