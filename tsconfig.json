@@ -23,6 +23,8 @@
     "buildOnSave": true,
     "files": [
         "Dice.ts",
+        "RDBComputeOdds.ts",
+        "RDBCtest01.ts",
         "RDBEstimateOdds.ts",
         "RDBtest01.ts",
         "RDBtest02.ts",
@@ -30,7 +32,9 @@
         "RDBtest04.ts",
         "RiskDiceBattle.ts",
         "test01.ts",
-        "test02.ts"
+        "test02.ts",
+        "test03.ts",
+        "test04.ts"
     ],
     "atom": {
         "rewriteTsconfig": true
