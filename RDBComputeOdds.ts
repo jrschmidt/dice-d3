@@ -29,33 +29,36 @@ class RDBComputeOdds {
 
     // pp[0] for any of these arrays is a dummy value. pp[6] represents the
     // probability of getting the indicated number of 6's, pp[5] represents
-    // probabilities for 5 or greater, etc.
+    // probabilities for 5 or greater, etc. pp[7] is set to zero to make it
+    // easy to access the correct probability of rolling a number higher than 6.
+
+    // The probabilities here were computed algebraicially, then confirmed by
+    // Monte Carlo estimation using test03 and test04 in this project folder.
 
 
     // The probability of rolling d or greater when rolling one die is
     // represented by:  p[d] / 216
-    let p: number[] = [0, 216, 180, 144, 108, 72, 36];
+    let p: number[] = [0, 216, 180, 144, 108, 72, 36, 0];
 
     // The probability that the highest number rolled will be d or greater
     // when rolling two dice is represented by:  pd2[d] / 216
-    let pd2: number[] = [0, 216, 210, 192, 162, 120, 66];
+    let pd2: number[] = [0, 216, 210, 192, 162, 120, 66, 0];
 
     // The probability that the highest number rolled will be d or greater
     // when rolling three dice is represented by:  pd3[d] / 216
-    let pd3: number[] = [0, 216, 215, 208, 189, 152, 91];
+    let pd3: number[] = [0, 216, 215, 208, 189, 152, 91, 0];
 
     // The probability that both numbers rolled will be d or greater when
     // rolling two dice is represented by:  pdd2[d] / 216
-    let pdd2: number[] = [0, 216, 150, 96, 54, 24, 6];
+    let pdd2: number[] = [0, 216, 150, 96, 54, 24, 6, 0];
 
     // The probability that the two highest numbers rolled will be d or greater
     // when rolling three dice is represented by:  pdd3[d] / 216
-    let pdd3: number[] = [0, 216, 200, 160, 108, 56, 16];
+    let pdd3: number[] = [0, 216, 200, 160, 108, 56, 16, 0];
   }
 
 
   computeOdds(attArmies: number, defArmies: number) {
-    // let result: any = {};
 
     let result: {
       success: boolean,
@@ -78,6 +81,29 @@ class RDBComputeOdds {
     result.err = err;
     result.errParams = errParams;
     return result;
+  }
+
+
+  private diceUsed(attArmies: number, defArmies: number) {
+    let att: number;
+    let def: number;
+
+    if (attArmies > 3) {att = 3;}
+    else {
+      if (attArmies === 3) {att = 2;}
+      else {
+        if (attArmies === 2) {att = 1;}
+        else {att = 0;}
+      }
+    }
+
+    if (defArmies > 1) {def = 2;}
+    else {
+      if (defArmies === 1) {def = 1;}
+      else {def = 0;}
+    }
+
+    return [att, def];
   }
 
 }

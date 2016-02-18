@@ -3,7 +3,7 @@
 // jrs 2016
 
 // Call with number of armies for Attacker and Defender like this:
-// node RDBtest02.ts
+// node RDBtest03.ts
 
 import RiskDiceBattle = require('./RiskDiceBattle');
 

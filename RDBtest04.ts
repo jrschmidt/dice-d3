@@ -3,7 +3,7 @@
 
 // Call with number of armies for Attacker and Defender, and the number of
 // repetitions desired, like this:
-// node RDBtest02.ts 8 3 1000
+// node RDBtest04.ts 8 3 1000
 
 import RDBEstimateOdds = require('./RDBEstimateOdds');
 
