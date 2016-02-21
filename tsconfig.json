@@ -23,6 +23,7 @@
     "buildOnSave": true,
     "files": [
         "Dice.ts",
+        "estimate06.ts",
         "RDBComputeOdds.ts",
         "RDBCtest01.ts",
         "RDBEstimateOdds.ts",
