@@ -24,6 +24,7 @@
     "files": [
         "Dice.ts",
         "estimate06.ts",
+        "estimate07.ts",
         "RDBComputeOdds.ts",
         "RDBCtest01.ts",
         "RDBEstimateOdds.ts",

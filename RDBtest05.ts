@@ -3,7 +3,7 @@
 // Defender will lose two armies, or each side will lose one army.
 // jrs 2016
 
-// Call with number of armies for Attacker and Defender, and the number of
+// Call with number of dice for Attacker and Defender, and the number of
 // repetitions desired, like this:
 // node RDBtest05.js 3 2 1000
 
