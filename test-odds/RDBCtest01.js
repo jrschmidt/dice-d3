@@ -1,0 +1,11 @@
+"use strict";
+var RDBComputeOdds = require('../modules/RDBComputeOdds');
+console.log("RUNNING test01 for 'RDBComputeOdds' module");
+console.log("test of computeOdds() function");
+var computeOdds = new RDBComputeOdds();
+var attArmies = process.argv[2];
+var defArmies = process.argv[3];
+var result = computeOdds.computeOdds(attArmies, defArmies);
+console.log(' ');
+console.log(result);
+console.log(' ');

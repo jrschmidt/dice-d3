@@ -1,0 +1,14 @@
+"use strict";
+var RiskDiceBattle = require('../modules/RiskDiceBattle');
+console.log("RUNNING test01 for 'RiskDiceBatle' module");
+console.log("test of battleOnce() function");
+var riskBattle = new RiskDiceBattle();
+var result;
+result = riskBattle.battleOnce(3, 2);
+console.log();
+console.log("  Attacker rolls: " + result.attRoll);
+console.log("  Defender rolls: " + result.defRoll);
+console.log();
+console.log("  Attacker loses " + result.loss[0]);
+console.log("  Defender loses " + result.loss[1]);
+console.log();
