@@ -26,14 +26,81 @@ class RiskDiceProbabilities {
 
   constructor() {
 
-    let probs1v1: number[][] = [];
+
+    // RULES FOR DICE BATTLES
+    // WHEN DEFENDER ONLY ROLLS 1 DIE
+    // OR ATTACKER ONLY ROLLS 1 DIE:
+
+    // Only one army can be lost in a contest where either the Attacker or the
+    // Defender only rolls one die. If Attacker rolls 2 or 3 dice and Defender
+    // only rolls one die, then Attacker's highest die is compared with the
+    // Defender's roll. If Defender rolls 2 dice and Attacker only rolls
+    // one die, then the Attacker's roll is compared with the Defender's highest
+    // die. Defender loses one army if their result is lower than the Attacker's,
+    // otherwise the Attacker loses one army ("Tie goes to the Defender").
 
 
-    let probs1v2: number[][] = [];
+
+    // Probabilities for Attacker rolling 1 die and Defender rolling 1 die.
+
+    let probs1v1: number[][] = [
+      [],
+      [180, 36],
+      [144, 72],
+      [108, 108],
+      [72, 144],
+      [36, 180],
+      [0, 216]
+    ];
 
 
-    let probs2v1: number[][] = [];
+    // Probabilities for Attacker rolling 1 die and Defender rolling 2 dice.
 
+    let probs1v2: number[][] = probs1v1;
+
+
+    // Probabilities for Attacker rolling 2 dice and Defender rolling 1 die.
+
+    let probs2v1: number[][] = [
+      [],
+      [210, 6],
+      [192, 24],
+      [162, 54],
+      [120, 96],
+      [66, 150],
+      [0, 216]
+    ];
+
+
+    // Probabilities for Attacker rolling 3 dice and Defender rolling 1 die.
+
+    let probs3v1: number[][] = [
+      [],
+      [215, 1],
+      [208, 8],
+      [189, 27],
+      [152, 64],
+      [91, 125],
+      [0, 216]
+    ];
+
+
+
+    // RULES FOR DICE BATTLES
+    // WHEN DEFENDER ROLLS 2 DICE
+    // AND ATTACKER ROLLS 2 OR 3 DICE:
+
+    // A total of two armies will be lost for each roll. Either Defender will
+    // lose 2 armies ('WW'), Defender and Attacker will each lose one army
+    // ('WL'), or Attacker will lose 2 armies ('LL'). Results are computed by
+    // first comparing Attacker's highest die with Defender's highest die, then
+    // comparing Attacker's second highest to Defender's second highest. For
+    // each comparision, Defender loses one army if their die is lower than
+    // Attacker's die, and Attacker loses one army if their die is lower or
+    // equal to Defender's die ("Tie goes to the Defender").
+
+
+    // Probabilities for Attacker rolling 2 dice and Defender rolling 2 dice.
 
     let probs2v2: number[][][] = [
       [],
@@ -84,25 +151,6 @@ class RiskDiceProbabilities {
       ]
 
     ];
-
-
-
-    let probs3v1: number[][] = [
-    ];
-
-
-    // RULES FOR DICE BATTLES
-    // WHEN DEFENDER ROLLS 2 DICE
-    // AND ATTACKER ROLLS 2 OR 3 DICE:
-
-    // A total of two armies will be lost for each roll. Either Defender will
-    // lose 2 armies ('WW'), Defender and Attacker will each lose one army
-    // ('WL'), or Attacker will lose 2 armies ('LL'). Results are computed by
-    // first comparing Attacker's highest die with Defender's highest die, then
-    // comparing Attacker's second highest to Defender's second highest. For
-    // each comparision, Defender loses one army if their die is lower than
-    // Attacker's die, and Attacker loses one army if their die is lower or
-    // equal to Defender's die ("Tie goes to the Defender").
 
 
     // Probabilities for Attacker rolling 3 dice and Defender rolling 2 dice.

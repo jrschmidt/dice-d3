@@ -1,9 +1,34 @@
 "use strict";
 var RiskDiceProbabilities = (function () {
     function RiskDiceProbabilities() {
-        var probs1v1 = [];
-        var probs1v2 = [];
-        var probs2v1 = [];
+        var probs1v1 = [
+            [],
+            [180, 36],
+            [144, 72],
+            [108, 108],
+            [72, 144],
+            [36, 180],
+            [0, 216]
+        ];
+        var probs1v2 = probs1v1;
+        var probs2v1 = [
+            [],
+            [210, 6],
+            [192, 24],
+            [162, 54],
+            [120, 96],
+            [66, 150],
+            [0, 216]
+        ];
+        var probs3v1 = [
+            [],
+            [215, 1],
+            [208, 8],
+            [189, 27],
+            [152, 64],
+            [91, 125],
+            [0, 216]
+        ];
         var probs2v2 = [
             [],
             [
@@ -46,7 +71,6 @@ var RiskDiceProbabilities = (function () {
                 [0, 0, 36]
             ]
         ];
-        var probs3v1 = [];
         var probs3v2 = [
             [],
             [

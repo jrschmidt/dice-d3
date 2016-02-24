@@ -5,7 +5,7 @@
 // supplied and print the contents of the returned 'results' object.
 
 // Call with number of armies for Attacker and Defender like this:
-// node RDBCtest01.ts
+// node RDBCtest01.ts 12 10
 
 
 import RDBComputeOdds = require('../modules/RDBComputeOdds');
