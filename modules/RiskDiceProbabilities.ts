@@ -32,18 +32,17 @@
 // easy to access the correct probability of rolling a number higher than 6.
 
 // The probabilities here were computed algebraicially, then confirmed by
-// Monte Carlo estimation using test03 and test04 in this project folder.
-
+// Monte Carlo estimation using test scripts in this project folder.
 
 
 
 class RiskDiceProbabilities {
 
-  private pd1;
-  private pd2;
-  private pd3;
-  private pdd2;
-  private pdd3;
+  private pgd1;
+  private pgd2;
+  private pgd3;
+  private pgdd2;
+  private pgdd3;
 
   private probs1v1;
   private probs1v2;
@@ -59,23 +58,23 @@ class RiskDiceProbabilities {
 
     // The probability of rolling d or greater when rolling one die is
     // represented by:  p[d] / 216
-    let pd1: number[] = [0, 216, 180, 144, 108, 72, 36, 0];
+    let pgd1: number[] = [0, 216, 180, 144, 108, 72, 36, 0];
 
     // The probability that the highest number rolled will be d or greater
     // when rolling two dice is represented by:  pd2[d] / 216
-    let pd2: number[] = [0, 216, 210, 192, 162, 120, 66, 0];
+    let pgd2: number[] = [0, 216, 210, 192, 162, 120, 66, 0];
 
     // The probability that the highest number rolled will be d or greater
     // when rolling three dice is represented by:  pd3[d] / 216
-    let pd3: number[] = [0, 216, 215, 208, 189, 152, 91, 0];
+    let pgd3: number[] = [0, 216, 215, 208, 189, 152, 91, 0];
 
     // The probability that both numbers rolled will be d or greater when
     // rolling two dice is represented by:  pdd2[d] / 216
-    let pdd2: number[] = [0, 216, 150, 96, 54, 24, 6, 0];
+    let pgdd2: number[] = [0, 216, 150, 96, 54, 24, 6, 0];
 
     // The probability that the two highest numbers rolled will be d or greater
     // when rolling three dice is represented by:  pdd3[d] / 216
-    let pdd3: number[] = [0, 216, 200, 160, 108, 56, 16, 0];
+    let pgdd3: number[] = [0, 216, 200, 160, 108, 56, 16, 0];
 
 
 
@@ -158,47 +157,47 @@ class RiskDiceProbabilities {
 
       [
         [],
-        [25, 10, 1]
+        [150, 60, 6],
       ],
 
       [
         [],
-        [24, 9, 3],
-        [16, 16, 4]
+        [144, 54, 18],
+        [96, 96, 24],
       ],
 
       [
         [],
-        [21, 10, 5],
-        [15, 13, 8],
-        [9, 18, 9]
+        [126, 60, 30],
+        [90, 78, 48],
+        [54, 108, 54],
       ],
 
       [
         [],
-        [16, 13, 7],
-        [12, 12, 12],
-        [8, 13, 15],
-        [4, 16, 16]
+        [96, 78, 42],
+        [72, 72, 72],
+        [48, 78, 90],
+        [24, 96, 96],
       ],
 
       [
         [],
-        [9, 18, 9],
-        [7, 13, 16],
-        [5, 10, 21],
-        [3, 9, 24],
-        [1, 10, 25]
+        [54, 108, 54],
+        [42, 78, 96],
+        [30, 60, 126],
+        [18, 54, 144],
+        [6, 60, 150],
       ],
 
       [
         [],
-        [0, 25, 11],
-        [0, 16, 20],
-        [0, 9, 27],
-        [0, 4, 32],
-        [0, 1, 35],
-        [0, 0, 36]
+        [0, 150, 66],
+        [0, 96, 120],
+        [0, 54, 162],
+        [0, 24, 192],
+        [0, 6, 210],
+        [0, 0, 216],
       ]
 
     ];
