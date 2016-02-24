@@ -8,53 +8,12 @@
 
 
 class RDBComputeOdds {
-
-  private p;
-  private pd2;
-  private pd3;
-  private pdd2;
-  private pdd3;
+  private maxArmies;
 
   constructor() {
 
-    // CONSTANTS FOR PROBABILITIES
-
-    // The probablity constants given here are expressed as '216ths'. That is,
-    // they represent numerators of fractions with a denominator of 216. This
-    // number is 6 to the third power. Any probability value for one, two or
-    // three dice will have a denominator which divides into this number.
-
-    // In simpler terms, dividing one of these values by 216 will give the
-    // probability that the term represents.
-
-    // pp[0] for any of these arrays is a dummy value. pp[6] represents the
-    // probability of getting the indicated number of 6's, pp[5] represents
-    // probabilities for 5 or greater, etc. pp[7] is set to zero to make it
-    // easy to access the correct probability of rolling a number higher than 6.
-
-    // The probabilities here were computed algebraicially, then confirmed by
-    // Monte Carlo estimation using test03 and test04 in this project folder.
-
-
-    // The probability of rolling d or greater when rolling one die is
-    // represented by:  p[d] / 216
-    let p: number[] = [0, 216, 180, 144, 108, 72, 36, 0];
-
-    // The probability that the highest number rolled will be d or greater
-    // when rolling two dice is represented by:  pd2[d] / 216
-    let pd2: number[] = [0, 216, 210, 192, 162, 120, 66, 0];
-
-    // The probability that the highest number rolled will be d or greater
-    // when rolling three dice is represented by:  pd3[d] / 216
-    let pd3: number[] = [0, 216, 215, 208, 189, 152, 91, 0];
-
-    // The probability that both numbers rolled will be d or greater when
-    // rolling two dice is represented by:  pdd2[d] / 216
-    let pdd2: number[] = [0, 216, 150, 96, 54, 24, 6, 0];
-
-    // The probability that the two highest numbers rolled will be d or greater
-    // when rolling three dice is represented by:  pdd3[d] / 216
-    let pdd3: number[] = [0, 216, 200, 160, 108, 56, 16, 0];
+    // Maximum armies for one side this module will accept.
+    let maxArmies: number = 30;
   }
 
 
@@ -73,14 +32,30 @@ class RDBComputeOdds {
 
     result = {success: false};
 
-    let success: boolean = false;
-    let err: string = 'required lesser function not available';
-    let errParams = [attArmies, defArmies];
+    let badInput: boolean = this.isInputBad(attArmies, defArmies);
+    if (badInput) {
+      result.err = "invalid input parameters";
+      result.errParams = [attArmies, defArmies];
 
-    result.success = success;
-    result.err = err;
-    result.errParams = errParams;
+    }
+    else {
+      result.err = 'required lesser function not available';
+      result.errParams = [attArmies, defArmies];
+    }
+
     return result;
+  }
+
+
+  private isInputBad(attArmies: number, defArmies: number): boolean {
+    if (! (attArmies > 1) ||
+        ! (defArmies > 0) ||
+        attArmies > 30 ||
+        defArmies > 30 ||
+        attArmies - Math.floor(attArmies) > 0 ||
+        defArmies - Math.floor(defArmies) > 0 )
+      {return true;}
+    else { return false;}
   }
 
 

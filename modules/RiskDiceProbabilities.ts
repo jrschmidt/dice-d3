@@ -1,9 +1,10 @@
 // A module to supply constants for probabilities in Risk-style dice battles.
 // jrs 2016
 
+
 // Use like this:
 
-// import  RiskDiceProbabilities = require('./RiskDiceProbabilities');
+// import  RiskDiceProbabilities = require('../modules/RiskDiceProbabilities');
 // let probs = new RiskDiceProbabilities();
 //
 // let probs1v1 = probs.get1v1Probs();
@@ -14,7 +15,35 @@
 // let probs3v2 = probs.get3v2Probs();
 //
 
+
+// CONSTANTS FOR PROBABILITIES
+
+// The probablity constants given here are expressed as '216ths'. That is,
+// they represent numerators of fractions with a denominator of 216. This
+// number is 6 to the third power. Any probability value for one, two or
+// three dice will have a denominator which divides into this number.
+
+// In simpler terms, dividing one of these values by 216 will give the
+// probability that the term represents.
+
+// pp[0] for any of these arrays is a dummy value. pp[6] represents the
+// probability of getting the indicated number of 6's, pp[5] represents
+// probabilities for 5 or greater, etc. pp[7] is set to zero to make it
+// easy to access the correct probability of rolling a number higher than 6.
+
+// The probabilities here were computed algebraicially, then confirmed by
+// Monte Carlo estimation using test03 and test04 in this project folder.
+
+
+
+
 class RiskDiceProbabilities {
+
+  private pd1;
+  private pd2;
+  private pd3;
+  private pdd2;
+  private pdd3;
 
   private probs1v1;
   private probs1v2;
@@ -24,7 +53,30 @@ class RiskDiceProbabilities {
   private probs3v2;
 
 
+
   constructor() {
+
+
+    // The probability of rolling d or greater when rolling one die is
+    // represented by:  p[d] / 216
+    let pd1: number[] = [0, 216, 180, 144, 108, 72, 36, 0];
+
+    // The probability that the highest number rolled will be d or greater
+    // when rolling two dice is represented by:  pd2[d] / 216
+    let pd2: number[] = [0, 216, 210, 192, 162, 120, 66, 0];
+
+    // The probability that the highest number rolled will be d or greater
+    // when rolling three dice is represented by:  pd3[d] / 216
+    let pd3: number[] = [0, 216, 215, 208, 189, 152, 91, 0];
+
+    // The probability that both numbers rolled will be d or greater when
+    // rolling two dice is represented by:  pdd2[d] / 216
+    let pdd2: number[] = [0, 216, 150, 96, 54, 24, 6, 0];
+
+    // The probability that the two highest numbers rolled will be d or greater
+    // when rolling three dice is represented by:  pdd3[d] / 216
+    let pdd3: number[] = [0, 216, 200, 160, 108, 56, 16, 0];
+
 
 
     // RULES FOR DICE BATTLES
@@ -38,7 +90,6 @@ class RiskDiceProbabilities {
     // one die, then the Attacker's roll is compared with the Defender's highest
     // die. Defender loses one army if their result is lower than the Attacker's,
     // otherwise the Attacker loses one army ("Tie goes to the Defender").
-
 
 
     // Probabilities for Attacker rolling 1 die and Defender rolling 1 die.
@@ -205,6 +256,38 @@ class RiskDiceProbabilities {
 
     ];
 
+  }  // end of constructor()
+
+
+  // Getter methods
+
+  getPd1() {
+    let rt: number[][] = this.pd1.clone();
+    return rt;
+  }
+
+
+  getPd2() {
+    let rt: number[][] = this.pd2.clone();
+    return rt;
+  }
+
+
+  getPd3() {
+    let rt: number[][] = this.pd3.clone();
+    return rt;
+  }
+
+
+  getPdd2() {
+    let rt: number[][] = this.pdd2.clone();
+    return rt;
+  }
+
+
+  getPdd3() {
+    let rt: number[][] = this.pdd3.clone();
+    return rt;
   }
 
 

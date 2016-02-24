@@ -1,6 +1,11 @@
 "use strict";
 var RiskDiceProbabilities = (function () {
     function RiskDiceProbabilities() {
+        var pd1 = [0, 216, 180, 144, 108, 72, 36, 0];
+        var pd2 = [0, 216, 210, 192, 162, 120, 66, 0];
+        var pd3 = [0, 216, 215, 208, 189, 152, 91, 0];
+        var pdd2 = [0, 216, 150, 96, 54, 24, 6, 0];
+        var pdd3 = [0, 216, 200, 160, 108, 56, 16, 0];
         var probs1v1 = [
             [],
             [180, 36],
@@ -114,6 +119,26 @@ var RiskDiceProbabilities = (function () {
             ]
         ];
     }
+    RiskDiceProbabilities.prototype.getPd1 = function () {
+        var rt = this.pd1.clone();
+        return rt;
+    };
+    RiskDiceProbabilities.prototype.getPd2 = function () {
+        var rt = this.pd2.clone();
+        return rt;
+    };
+    RiskDiceProbabilities.prototype.getPd3 = function () {
+        var rt = this.pd3.clone();
+        return rt;
+    };
+    RiskDiceProbabilities.prototype.getPdd2 = function () {
+        var rt = this.pdd2.clone();
+        return rt;
+    };
+    RiskDiceProbabilities.prototype.getPdd3 = function () {
+        var rt = this.pdd3.clone();
+        return rt;
+    };
     RiskDiceProbabilities.prototype.get1v1Probs = function () {
         var rt = this.probs1v1.clone();
         return rt;
