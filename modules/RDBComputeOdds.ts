@@ -7,10 +7,25 @@
 // computeOdds(8, 3)
 
 
+import RiskDiceProbabilities = require('../modules/RiskDiceProbabilities');
+
+
+interface ResultObject {
+    success: boolean,
+    err?: string,
+    errParams?: number[],
+    prob?: number,
+    remAtt?: number[],
+    remDef?: number[],
+}
+
+
 class RDBComputeOdds {
   private maxArmies;
 
   constructor() {
+
+    let probsRD = new RiskDiceProbabilities();
 
     // Maximum armies for one side this module will accept.
     let maxArmies: number = 30;
@@ -19,32 +34,56 @@ class RDBComputeOdds {
 
   computeOdds(attArmies: number, defArmies: number) {
 
-    let result: {
-      success: boolean,
-      err?: string,
-      errParams?: number[],
-      prob?: number,
-      value216?: number,
-      exponent216?: number,
-      remAtt?: number[],
-      remDef?: number[],
-    };
+    let result: ResultObject = {success: false};
+    let newResult: ResultObject = {success: false};
 
-    result = {success: false};
-
-    let badInput: boolean = this.isInputBad(attArmies, defArmies);
-    if (badInput) {
+    if (this.isInputBad(attArmies, defArmies)) {
       result.err = "invalid input parameters";
       result.errParams = [attArmies, defArmies];
-
     }
+
     else {
-      result.err = 'required lesser function not available';
-      result.errParams = [attArmies, defArmies];
+      if (defArmies < 2 || attArmies < 3) {
+        newResult = this.computeOdds1ArmyLost(attArmies, defArmies);
+      }
+      else {
+        newResult = this.computeOdds2ArmiesLost(attArmies, defArmies);
+      }
+
+      result = newResult;
     }
 
     return result;
   }
+
+
+private computeOdds1ArmyLost(attArmies: number, defArmies: number) {
+  let result: ResultObject = {success: false};
+
+  if (attArmies == 2 && defArmies == 1) {
+    result.success = true;
+    result.prob = 15 / 36;
+    result.remAtt = [ 0, 0, 0.416666 ];
+    result.remDef = [ 0, 0.583333 ];
+  }
+
+  else {
+    result.err = 'required lesser function not available';
+    result.errParams = [attArmies, defArmies];
+  }
+
+  return result;
+}
+
+
+private computeOdds2ArmiesLost(attArmies: number, defArmies: number) {
+  let result: ResultObject = {success: false};
+
+  result.err = 'required lesser function not available';
+  result.errParams = [attArmies, defArmies];
+
+  return result;
+}
 
 
   private isInputBad(attArmies: number, defArmies: number): boolean {
