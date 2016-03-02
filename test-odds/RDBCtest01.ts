@@ -10,6 +10,7 @@
 
 import RDBComputeOdds = require('../modules/RDBComputeOdds');
 
+console.log(" ");
 console.log("RUNNING test01 for 'RDBComputeOdds' module");
 console.log("test of computeOdds() function");
 

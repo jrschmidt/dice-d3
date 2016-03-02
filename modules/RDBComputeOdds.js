@@ -6,6 +6,8 @@ var RDBComputeOdds = (function () {
         this.maxArmies = 30;
     }
     RDBComputeOdds.prototype.computeOdds = function (attArmies, defArmies) {
+        console.log(' ');
+        console.log('   computeOdds( ' + attArmies + ', ' + defArmies + ' )');
         var result = { success: false };
         if (this.isInputBad(attArmies, defArmies)) {
             result.err = "invalid input parameters";
@@ -36,7 +38,7 @@ var RDBComputeOdds = (function () {
             var probs = rdbProbs.getProbs(dice[0], dice[1]);
             var pwResult = this.computeOdds(attArmies, defArmies - 1);
             var plResult = this.computeOdds(attArmies - 1, defArmies);
-            var mergeResult = this.merge(probs, [pwResult, plResult]);
+            var mergeResult = this.merge(attArmies, defArmies, probs, [pwResult, plResult]);
             result.success = true;
             result.remAtt = mergeResult.remAtt;
             result.remDef = mergeResult.remDef;
@@ -55,7 +57,7 @@ var RDBComputeOdds = (function () {
             var pwwResult = this.computeOdds(attArmies, defArmies - 2);
             var pwlResult = this.computeOdds(attArmies - 1, defArmies - 1);
             var pllResult = this.computeOdds(attArmies - 2, defArmies);
-            var mergeResult = this.merge(probs, [pwwResult, pwlResult, pllResult]);
+            var mergeResult = this.merge(attArmies, defArmies, probs, [pwwResult, pwlResult, pllResult]);
             result.success = true;
             result.remAtt = mergeResult.remAtt;
             result.remDef = mergeResult.remDef;
@@ -84,13 +86,11 @@ var RDBComputeOdds = (function () {
         result.remDef = this.rems100Percent(defArmies);
         return result;
     };
-    RDBComputeOdds.prototype.merge = function (probs, results) {
+    RDBComputeOdds.prototype.merge = function (maxAtt, maxDef, probs, results) {
         var rems = {
             remAtt: [0, 0],
             remDef: [0]
         };
-        var maxAtt = this.getMaxAtt(results);
-        var maxDef = this.getMaxDef(results);
         var remsArrayAtt = [];
         for (var i = 0; i < results.length; i++) {
             remsArrayAtt.push(results[i].remAtt);
@@ -119,20 +119,6 @@ var RDBComputeOdds = (function () {
         }
         return rems;
     };
-    RDBComputeOdds.prototype.getMaxAtt = function (results) {
-        var max = 0;
-        for (var i = 0; i < results.length; i++) {
-            max = Math.max(max, results[i].remAtt.length);
-        }
-        return max;
-    };
-    RDBComputeOdds.prototype.getMaxDef = function (results) {
-        var max = 0;
-        for (var i = 0; i < results.length; i++) {
-            max = Math.max(max, results[i].remDef.length);
-        }
-        return max;
-    };
     RDBComputeOdds.prototype.rems100Percent = function (max) {
         var vals = [];
         for (var i = 0; i < max; i++) {
@@ -142,8 +128,8 @@ var RDBComputeOdds = (function () {
         return vals;
     };
     RDBComputeOdds.prototype.isInputBad = function (attArmies, defArmies) {
-        if (!(attArmies > 1) ||
-            !(defArmies > 0) ||
+        if (!(attArmies >= 1) ||
+            !(defArmies >= 0) ||
             attArmies > this.maxArmies ||
             defArmies > this.maxArmies ||
             attArmies - Math.floor(attArmies) > 0 ||

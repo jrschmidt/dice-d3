@@ -65,6 +65,8 @@ class RDBComputeOdds {
   // result set by the probability that that branch will be
   // reached.
   computeOdds(attArmies: number, defArmies: number) {
+    console.log(' ');
+    console.log('   computeOdds( ' + attArmies + ', ' + defArmies + ' )');
 
     let result: ResultObject = {success: false};
 
@@ -107,7 +109,7 @@ class RDBComputeOdds {
       let probs: number[] = rdbProbs.getProbs(dice[0], dice[1]);
       let pwResult: ResultObject = this.computeOdds(attArmies, defArmies - 1);
       let plResult: ResultObject = this.computeOdds(attArmies - 1, defArmies);
-      let mergeResult: RemainderOdds = this.merge(probs, [pwResult, plResult]);
+      let mergeResult: RemainderOdds = this.merge(attArmies, defArmies, probs, [pwResult, plResult]);
       result.success = true;
       result.remAtt = mergeResult.remAtt;
       result.remDef = mergeResult.remDef;
@@ -132,7 +134,7 @@ class RDBComputeOdds {
       let pwwResult: ResultObject = this.computeOdds(attArmies, defArmies - 2);
       let pwlResult: ResultObject = this.computeOdds(attArmies -1, defArmies - 1);
       let pllResult: ResultObject = this.computeOdds(attArmies - 2, defArmies);
-      let mergeResult: RemainderOdds = this.merge(probs, [pwwResult, pwlResult, pllResult]);
+      let mergeResult: RemainderOdds = this.merge(attArmies, defArmies, probs, [pwwResult, pwlResult, pllResult]);
       result.success = true;
       result.remAtt = mergeResult.remAtt;
       result.remDef = mergeResult.remDef;
@@ -183,15 +185,12 @@ class RDBComputeOdds {
   // Defender will have 1, 2, 3, etc. armies left after the battle) for
   // each branch ('WIN', 'LOSE' for 1 army lost, or 'WIN-WIN', 'WIN-LOSE',
   // 'LOSE-LOSE' for 2 armies lost).
-  private merge(probs: number[], results: ResultObject[]): RemainderOdds {
+  private merge(maxAtt: number, maxDef: number, probs: number[], results: ResultObject[]): RemainderOdds {
 
     let rems: RemainderOdds = {
       remAtt: [0, 0],
       remDef: [0]
     }
-
-    let maxAtt: number = this.getMaxAtt(results);
-    let maxDef: number = this.getMaxDef(results);
 
     // Extract Attacker's remainder arrays for each branch.
     let remsArrayAtt: number[][] = [];
@@ -235,26 +234,6 @@ class RDBComputeOdds {
   }
 
 
-  // Find length of longest of the 2 or 3 remAtt arrays.
-  private getMaxAtt(results: any): number {
-    let max: number = 0;
-    for (let i: number = 0; i < results.length; i++) {
-      max = Math.max(max, results[i].remAtt.length);
-    }
-    return max;
-  }
-
-
-  // Find length of longest of the 2 or 3 remDef arrays.
-  private getMaxDef(results: any): number {
-    let max: number = 0;
-    for (let i: number = 0; i < results.length; i++) {
-      max = Math.max(max, results[i].remDef.length);
-    }
-    return max;
-  }
-
-
   // Returns number[] with last value = 1.0 and other values = 0
   private rems100Percent(max: number): number[] {
     let vals: number[] = [];
@@ -265,8 +244,8 @@ class RDBComputeOdds {
 
 
   private isInputBad(attArmies: number, defArmies: number): boolean {
-    if (! (attArmies > 1) ||
-        ! (defArmies > 0) ||
+    if (! (attArmies >= 1) ||
+        ! (defArmies >= 0) ||
         attArmies > this.maxArmies ||
         defArmies > this.maxArmies ||
         attArmies - Math.floor(attArmies) > 0 ||
