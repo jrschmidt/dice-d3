@@ -12,7 +12,7 @@
 // d1 must be greater or equal to d2.
 
 
-import Dice = require('../Dice');
+import Dice = require('../modules/Dice');
 
 let d1: number = process.argv[2];
 let d2: number = process.argv[3];

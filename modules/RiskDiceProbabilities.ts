@@ -7,12 +7,8 @@
 // import  RiskDiceProbabilities = require('../modules/RiskDiceProbabilities');
 // let probs = new RiskDiceProbabilities();
 //
-// let probs1v1 = probs.getProbs1v1();
-// let probs1v2 = probs.getProbs1v2();
-// let probs2v1 = probs.getProbs2v1();
-// let probs2v2 = probs.getProbs2v2();
-// let probs3v1 = probs.getProbs3v1();
-// let probs3v2 = probs.getProbs3v2();
+// (example: probabilities for 3 dice attacking 2 dice)
+// let probs3v2 = probs.getProbs(3,2);
 //
 
 
@@ -45,123 +41,57 @@
 
 class RiskDiceProbabilities {
 
-  private pgd1;
-  private pgd2;
-  private pgd3;
-  private pgdd2;
-  private pgdd3;
+  private probs;
 
 
   constructor() {
+    this.probs = [ [], [], [], [] ];
+    let pw: number;
+    let pl: number;
+    let pww: number;
+    let pwl: number;
+    let pll: number;
 
-    // The probability of rolling d or greater when rolling one die is
-    // represented by:  p[d] / 216
-    let pgd1: number[] = [0, 216, 180, 144, 108, 72, 36, 0];
+    // Probabilities for Attacker rolling 1 die and Defender rolling 1 die.
+    pw = 15 / 36;
+    pl = 21 / 36;
+    this.probs[1][1] = [pw, pl];
 
-    // The probability that the highest number rolled will be d or greater
-    // when rolling two dice is represented by:  pd2[d] / 216
-    let pgd2: number[] = [0, 216, 210, 192, 162, 120, 66, 0];
+    // Probabilities for Attacker rolling 1 die and Defender rolling 2 dice.
+    pw = 55 / 216;
+    pl = 161 / 216;
+    this.probs[1][2] = [pw, pl];
 
-    // The probability that the highest number rolled will be d or greater
-    // when rolling three dice is represented by:  pd3[d] / 216
-    let pgd3: number[] = [0, 216, 215, 208, 189, 152, 91, 0];
+    // Probabilities for Attacker rolling 2 dice and Defender rolling 1 die.
+    pw = 125 / 216;
+    pl = 91 / 216;
+    this.probs[2][1] = [pw, pl];
 
-    // The probability that both numbers rolled will be d or greater when
-    // rolling two dice is represented by:  pdd2[d] / 216
-    let pgdd2: number[] = [0, 216, 150, 96, 54, 24, 6, 0];
+    // Probabilities for Attacker rolling 2 dice and Defender rolling 2 dice.
+    pww = 295 / 1296;
+    pwl = 420 / 1296;
+    pll = 581 / 1296;
+    this.probs[2][2] = [pww, pwl, pll];
 
-    // The probability that the two highest numbers rolled will be d or greater
-    // when rolling three dice is represented by:  pdd3[d] / 216
-    let pgdd3: number[] = [0, 216, 200, 160, 108, 56, 16, 0];
+    // Probabilities for Attacker rolling 3 dice and Defender rolling 1 die.
+    pw = 855 / 1296;
+    pl = 441 / 1296;
+    this.probs[3][1] = [pw, pl];
+
+    // Probabilities for Attacker rolling 3 dice and Defender rolling 2 dice.
+    pww = 2890 / 7776;
+    pwl = 2611 / 7776;
+    pll = 2275 / 7776;
+    this.probs[3][2] = [pww, pwl, pll];
 
   }  // end of constructor()
 
 
-  // Getter methods
+  // Getter method
 
-  // Probabilities for Attacker rolling 1 die and Defender rolling 1 die.
-
-  getProbs1v1() {
-    let pw: number = 15 / 36;
-    let pl: number = 21 / 36;
-    return [pw, pl];
-  }
-
-
-  // Probabilities for Attacker rolling 1 die and Defender rolling 2 dice.
-
-  getProbs1v2() {
-    let pw: number = 55 / 216;
-    let pl: number = 161 / 216;
-    return [pw, pl];
-  }
-
-
-  // Probabilities for Attacker rolling 2 dice and Defender rolling 1 die.
-
-  getProbs2v1() {
-    let pw: number = 125 / 216;
-    let pl: number = 91 / 216;
-    return [pw, pl];
-  }
-
-
-  // Probabilities for Attacker rolling 2 dice and Defender rolling 2 dice.
-
-  getProbs2v2() {
-    let pww: number = 295 / 1296;
-    let pwl: number = 420 / 1296;
-    let pll: number = 581 / 1296;
-    return [pww, pwl, pll];
-  }
-
-
-  // Probabilities for Attacker rolling 3 dice and Defender rolling 1 die.
-
-  getProbs3v1() {
-    let pw: number = 855 / 1296;
-    let pl: number = 441 / 1296;
-    return [pw, pl];
-  }
-
-
-  // Probabilities for Attacker rolling 3 dice and Defender rolling 2 dice.
-
-  getProbs3v2() {
-    let pww: number = 2890 / 7776;
-    let pwl: number = 2611 / 7776;
-    let pll: number = 2275 / 7776;
-    return [pww, pwl, pll];
-  }
-
-
-  getPd1() {
-    let rt: number[][] = this.pgd1.clone();
-    return rt;
-  }
-
-
-  getPd2() {
-    let rt: number[][] = this.pgd2.clone();
-    return rt;
-  }
-
-
-  getPd3() {
-    let rt: number[][] = this.pgd3.clone();
-    return rt;
-  }
-
-
-  getPdd2() {
-    let rt: number[][] = this.pgdd2.clone();
-    return rt;
-  }
-
-
-  getPdd3() {
-    let rt: number[][] = this.pgdd3.clone();
-    return rt;
+  // Return probabilities for a given number of Attacker and Defender dice
+  getProbs(dA: number, dD: number): number[] {
+    return this.probs[dA][dD];
   }
 
 

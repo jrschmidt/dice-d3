@@ -1,5 +1,5 @@
 "use strict";
-var Dice = require('../Dice');
+var Dice = require('../modules/Dice');
 var d1 = process.argv[2];
 var d2 = process.argv[3];
 var dice = new Dice();

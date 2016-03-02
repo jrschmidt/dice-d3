@@ -9,88 +9,266 @@
 
 import RiskDiceProbabilities = require('../modules/RiskDiceProbabilities');
 
+let rdbProbs = new RiskDiceProbabilities();
 
 interface ResultObject {
     success: boolean,
     err?: string,
     errParams?: number[],
-    prob?: number,
     remAtt?: number[],
     remDef?: number[],
+    branches?: BranchesObject
+}
+
+interface RemainderOdds {
+  remAtt: number[],
+  remDef: number[],
+}
+
+interface BranchesObject {
+  branchType: string
+}
+
+interface Branches2 extends BranchesObject {
+  pw: ProbabilityBranch,
+  pl: ProbabilityBranch
+}
+
+interface Branches3 extends BranchesObject {
+  pww: ProbabilityBranch,
+  pwl: ProbabilityBranch,
+  pll: ProbabilityBranch
+}
+
+interface ProbabilityBranch {
+  terminalBranch: boolean,
+  probability: number,
+  remAtt: number[],
+  remDef: number[]
 }
 
 
 class RDBComputeOdds {
   private maxArmies;
+  private rdbProbs;
 
   constructor() {
 
-    let probsRD = new RiskDiceProbabilities();
-
     // Maximum armies for one side this module will accept.
-    let maxArmies: number = 30;
+    this.maxArmies = 30;
   }
 
-
+  // Recursively compute probabilities for the various possible
+  // results for A armies attacking and D armies defending by
+  // computing probabilities for each permutation branching
+  // from P(A,D) and merging those results, multiplying each
+  // result set by the probability that that branch will be
+  // reached.
   computeOdds(attArmies: number, defArmies: number) {
 
     let result: ResultObject = {success: false};
-    let newResult: ResultObject = {success: false};
 
     if (this.isInputBad(attArmies, defArmies)) {
       result.err = "invalid input parameters";
       result.errParams = [attArmies, defArmies];
     }
 
-    else {
-      if (defArmies < 2 || attArmies < 3) {
-        newResult = this.computeOdds1ArmyLost(attArmies, defArmies);
-      }
-      else {
-        newResult = this.computeOdds2ArmiesLost(attArmies, defArmies);
-      }
+    else if (defArmies < 1) {
+        result = this.terminalBranchWin(attArmies, defArmies);
+    }
 
-      result = newResult;
+    else if (attArmies < 2) {
+      result = this.terminalBranchLose(attArmies, defArmies);
+    }
+
+    else if (defArmies < 2 || attArmies < 3) {
+      result = this.computeOdds1ArmyLost(attArmies, defArmies);
+    }
+
+    else {
+      result = this.computeOdds2ArmiesLost(attArmies, defArmies);
     }
 
     return result;
   }
 
 
-private computeOdds1ArmyLost(attArmies: number, defArmies: number) {
-  let result: ResultObject = {success: false};
+  // Process a result node with 2 branches ('WIN', 'LOSE').
+  private computeOdds1ArmyLost(attArmies: number, defArmies: number) {
+    let result: ResultObject = {success: false};
 
-  if (attArmies == 2 && defArmies == 1) {
+    if (attArmies != 2 && defArmies != 1) {
+      result.err = 'computeOdds1ArmyLost() called with bad parameters';
+      result.errParams = [attArmies, defArmies];
+    }
+
+    else {
+      let dice: number[] = this.diceUsed(attArmies, defArmies);
+      let probs: number[] = rdbProbs.getProbs(dice[0], dice[1]);
+      let pwResult: ResultObject = this.computeOdds(attArmies, defArmies - 1);
+      let plResult: ResultObject = this.computeOdds(attArmies - 1, defArmies);
+      let mergeResult: RemainderOdds = this.merge(probs, [pwResult, plResult]);
+      result.success = true;
+      result.remAtt = mergeResult.remAtt;
+      result.remDef = mergeResult.remDef;
+    }
+
+    return result;
+  }
+
+
+  // Process a result node with 3 branches ('WIN-WIN', 'WIN-LOSE', 'LOSE-LOSE').
+  private computeOdds2ArmiesLost(attArmies: number, defArmies: number) {
+    let result: ResultObject = {success: false};
+
+    if (attArmies < 3 || defArmies < 2) {
+      result.err = 'computeOdds2ArmiesLost() called with bad parameters';
+      result.errParams = [attArmies, defArmies];
+    }
+
+    else {
+      let dice: number[] = this.diceUsed(attArmies, defArmies);
+      let probs: number[] = rdbProbs.getProbs(dice[0], dice[1]);
+      let pwwResult: ResultObject = this.computeOdds(attArmies, defArmies - 2);
+      let pwlResult: ResultObject = this.computeOdds(attArmies -1, defArmies - 1);
+      let pllResult: ResultObject = this.computeOdds(attArmies - 2, defArmies);
+      let mergeResult: RemainderOdds = this.merge(probs, [pwwResult, pwlResult, pllResult]);
+      result.success = true;
+      result.remAtt = mergeResult.remAtt;
+      result.remDef = mergeResult.remDef;
+    }
+
+
+    return result;
+  }
+
+
+  // Process a result node that has no branches because Defender now
+  // has zero armies (Attacker wins the battle).
+  private terminalBranchWin(attArmies: number, defArmies: number) {
+    let result: ResultObject = {success: false};
+
+    if (attArmies < 2 || defArmies > 0) {
+        result.err = 'terminalBranchWin() called with bad parameters';
+        result.errParams = [attArmies, defArmies];
+    }
+
     result.success = true;
-    result.prob = 15 / 36;
-    result.remAtt = [ 0, 0, 0.416666 ];
-    result.remDef = [ 0, 0.583333 ];
+    result.remAtt = this.rems100Percent(attArmies);
+    result.remDef = [0];
+
+    return result;
   }
 
-  else {
-    result.err = 'required lesser function not available';
-    result.errParams = [attArmies, defArmies];
+
+  // Process a result node that has no branches because Attacker only
+  // has one army left and can no longer attack (Attacker loses the battle).
+  private terminalBranchLose(attArmies: number, defArmies: number) {
+    let result: ResultObject = {success: false};
+
+    if (attArmies > 1 || defArmies < 1) {
+      result.err = 'terminalBranchLose() called with bad parameters';
+      result.errParams = [attArmies, defArmies];
+    }
+
+    result.success = true;
+    result.remAtt = [0];
+    result.remDef = this.rems100Percent(defArmies);
+
+    return result;
   }
 
-  return result;
-}
+
+  // Merge 'remainder arrays' (an array of probabilities that Attacker or
+  // Defender will have 1, 2, 3, etc. armies left after the battle) for
+  // each branch ('WIN', 'LOSE' for 1 army lost, or 'WIN-WIN', 'WIN-LOSE',
+  // 'LOSE-LOSE' for 2 armies lost).
+  private merge(probs: number[], results: ResultObject[]): RemainderOdds {
+
+    let rems: RemainderOdds = {
+      remAtt: [0, 0],
+      remDef: [0]
+    }
+
+    let maxAtt: number = this.getMaxAtt(results);
+    let maxDef: number = this.getMaxDef(results);
+
+    // Extract Attacker's remainder arrays for each branch.
+    let remsArrayAtt: number[][] = [];
+    for (let i: number = 0; i < results.length; i++) {
+      remsArrayAtt.push(results[i].remAtt);
+    }
+
+    // Extract Defender's remainder arrays for each branch.
+    let remsArrayDef: number[][] = [];
+    for (let i: number = 0; i < results.length; i++) {
+      remsArrayDef.push(results[i].remDef);
+    }
+
+    // Up to the length of the longest Attacker remainder array ...
+    for (let i: number = 2; i <= maxAtt; i++) {
+
+      let sum: number = 0;
+      // For each branch...
+      for (let j: number = 0; j < results.length; j++) {
+        if (remsArrayAtt[j].length > i) {
+          sum += remsArrayAtt[j][i] * probs[j];
+        }
+      }
+      rems.remAtt.push(sum);
+    }
+
+    // Up to the length of the longest Defender remainder array ...
+    for (let i: number = 1; i <= maxDef; i++) {
+
+      let sum: number = 0;
+      // For each branch...
+      for (let j: number = 0; j < results.length; j++) {
+        if (remsArrayDef[j].length > i) {
+          sum += remsArrayDef[j][i] * probs[j];
+        }
+      }
+      rems.remDef.push(sum);
+    }
+
+    return rems
+  }
 
 
-private computeOdds2ArmiesLost(attArmies: number, defArmies: number) {
-  let result: ResultObject = {success: false};
+  // Find length of longest of the 2 or 3 remAtt arrays.
+  private getMaxAtt(results: any): number {
+    let max: number = 0;
+    for (let i: number = 0; i < results.length; i++) {
+      max = Math.max(max, results[i].remAtt.length);
+    }
+    return max;
+  }
 
-  result.err = 'required lesser function not available';
-  result.errParams = [attArmies, defArmies];
 
-  return result;
-}
+  // Find length of longest of the 2 or 3 remDef arrays.
+  private getMaxDef(results: any): number {
+    let max: number = 0;
+    for (let i: number = 0; i < results.length; i++) {
+      max = Math.max(max, results[i].remDef.length);
+    }
+    return max;
+  }
+
+
+  // Returns number[] with last value = 1.0 and other values = 0
+  private rems100Percent(max: number): number[] {
+    let vals: number[] = [];
+    for (let i: number = 0; i < max; i++) {vals.push(0);}
+    vals[max] = 1.0;
+    return vals;
+  }
 
 
   private isInputBad(attArmies: number, defArmies: number): boolean {
     if (! (attArmies > 1) ||
         ! (defArmies > 0) ||
-        attArmies > 30 ||
-        defArmies > 30 ||
+        attArmies > this.maxArmies ||
+        defArmies > this.maxArmies ||
         attArmies - Math.floor(attArmies) > 0 ||
         defArmies - Math.floor(defArmies) > 0 )
       {return true;}
@@ -98,27 +276,30 @@ private computeOdds2ArmiesLost(attArmies: number, defArmies: number) {
   }
 
 
+  // How many dice are used by Attacker and Defender, based on
+  // the number of armies each one has.
   private diceUsed(attArmies: number, defArmies: number) {
     let att: number;
     let def: number;
 
     if (attArmies > 3) {att = 3;}
     else {
-      if (attArmies === 3) {att = 2;}
+      if (attArmies == 3) {att = 2;}
       else {
-        if (attArmies === 2) {att = 1;}
+        if (attArmies == 2) {att = 1;}
         else {att = 0;}
       }
     }
 
     if (defArmies > 1) {def = 2;}
     else {
-      if (defArmies === 1) {def = 1;}
+      if (defArmies == 1) {def = 1;}
       else {def = 0;}
     }
 
     return [att, def];
   }
+
 
 }
 
