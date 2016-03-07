@@ -30,6 +30,7 @@
         "test-odds/RDBCtest01.ts",
         "test-RDB/estimate06.ts",
         "test-RDB/estimate07.ts",
+        "test-RDB/estimate08.ts",
         "test-RDB/RDBtest01.ts",
         "test-RDB/RDBtest02.ts",
         "test-RDB/RDBtest03.ts",
