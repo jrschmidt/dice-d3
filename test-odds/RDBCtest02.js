@@ -11,9 +11,11 @@ console.log("Computing 'remainder' probabilities for Attacker and Defender");
 console.log('when Attacker attacks with ' + attArmies);
 console.log('and Defender defends with ' + defArmies);
 var result = computeOdds.computeOdds(attArmies, defArmies);
-console.log(' ');
-console.log(result);
-console.log(' ');
+if (result.success != true) {
+    console.log(' ');
+    console.log(result);
+    console.log(' ');
+}
 if (result.success) {
     var remAtt = result.remAtt;
     var remDef = result.remDef;
@@ -25,6 +27,7 @@ if (result.success) {
     for (var i = 0; i < remDef.length; i++) {
         defTotal += remDef[i];
     }
+    console.log(' ');
     console.log('Results for Attacker:');
     console.log('   probability of Attacker winning = ' + attTotal);
     for (var i = 2; i <= attArmies; i++) {

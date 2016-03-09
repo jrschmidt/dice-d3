@@ -25,9 +25,11 @@ console.log('and Defender defends with ' + defArmies);
 
 let result: any = computeOdds.computeOdds(attArmies, defArmies);
 
-console.log(' ');
-console.log(result);
-console.log(' ');
+if (result.success != true) {
+  console.log(' ');
+  console.log(result);
+  console.log(' ');
+}
 
 if (result.success) {
   let remAtt: number[] = result.remAtt;
@@ -43,6 +45,7 @@ if (result.success) {
     defTotal += remDef[i];
   }
 
+  console.log(' ');
   console.log('Results for Attacker:');
   console.log('   probability of Attacker winning = ' + attTotal);
   for (let i: number = 2; i <= attArmies; i++) {

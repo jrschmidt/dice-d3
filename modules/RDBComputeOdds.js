@@ -3,13 +3,17 @@ var RiskDiceProbabilities = require('../modules/RiskDiceProbabilities');
 var rdbProbs = new RiskDiceProbabilities();
 var RDBComputeOdds = (function () {
     function RDBComputeOdds() {
-        this.maxArmies = 16;
+        this.maxArmies = 30;
+        this.resultStore = [];
     }
     RDBComputeOdds.prototype.computeOdds = function (attArmies, defArmies) {
         var result = { success: false };
         if (this.isInputBad(attArmies, defArmies)) {
             result.err = "invalid input parameters";
             result.errParams = [attArmies, defArmies];
+        }
+        else if (this.resultIsSaved(attArmies, defArmies)) {
+            result = this.fetchSavedResult(attArmies, defArmies);
         }
         else if (defArmies < 1) {
             result = this.terminalBranchWin(attArmies, defArmies);
@@ -19,9 +23,15 @@ var RDBComputeOdds = (function () {
         }
         else if (defArmies < 2 || attArmies < 3) {
             result = this.computeOdds1ArmyLost(attArmies, defArmies);
+            if (result.success) {
+                this.saveResult(attArmies, defArmies, result);
+            }
         }
         else {
             result = this.computeOdds2ArmiesLost(attArmies, defArmies);
+            if (result.success) {
+                this.saveResult(attArmies, defArmies, result);
+            }
         }
         return result;
     };
@@ -116,6 +126,31 @@ var RDBComputeOdds = (function () {
             rems.remDef.push(sum);
         }
         return rems;
+    };
+    RDBComputeOdds.prototype.resultIsSaved = function (attArmies, defArmies) {
+        if (this.resultStore[attArmies] != undefined && this.resultStore[attArmies][defArmies] != undefined) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    RDBComputeOdds.prototype.saveResult = function (attArmies, defArmies, result) {
+        var remOdds = {
+            remAtt: result.remAtt,
+            remDef: result.remDef
+        };
+        if (this.resultStore[attArmies] == undefined) {
+            this.resultStore[attArmies] = [];
+        }
+        this.resultStore[attArmies][defArmies] = remOdds;
+    };
+    RDBComputeOdds.prototype.fetchSavedResult = function (attArmies, defArmies) {
+        var result = { success: true };
+        var res = this.resultStore[attArmies][defArmies];
+        result.remAtt = res.remAtt;
+        result.remDef = res.remDef;
+        return result;
     };
     RDBComputeOdds.prototype.rems100Percent = function (max) {
         var vals = [];

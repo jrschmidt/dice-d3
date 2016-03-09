@@ -16,8 +16,7 @@ interface ResultObject {
     err?: string,
     errParams?: number[],
     remAtt?: number[],
-    remDef?: number[],
-    branches?: BranchesObject
+    remDef?: number[]
 }
 
 interface RemainderOdds {
@@ -49,13 +48,20 @@ interface ProbabilityBranch {
 
 
 class RDBComputeOdds {
-  private maxArmies;
-  private rdbProbs;
+  private maxArmies: number;
+  private resultStore: RemainderOdds[][];
+  private rdbProbs: any;
 
   constructor() {
 
     // Maximum armies for one side this module will accept.
-    this.maxArmies = 16;
+    this.maxArmies = 30;
+
+    // A temporary store for results already computed.
+    // (note - A new, empty resultStore[] array is initialized each time a new
+    // RDBComputeOdds object is instantiated.)
+    this.resultStore = [];
+
   }
 
   // Recursively compute probabilities for the various possible
@@ -73,6 +79,10 @@ class RDBComputeOdds {
       result.errParams = [attArmies, defArmies];
     }
 
+    else if (this.resultIsSaved(attArmies, defArmies)) {
+      result = this.fetchSavedResult(attArmies, defArmies);
+    }
+
     else if (defArmies < 1) {
         result = this.terminalBranchWin(attArmies, defArmies);
     }
@@ -83,10 +93,16 @@ class RDBComputeOdds {
 
     else if (defArmies < 2 || attArmies < 3) {
       result = this.computeOdds1ArmyLost(attArmies, defArmies);
+      if (result.success) {
+        this.saveResult(attArmies, defArmies, result);
+      }
     }
 
     else {
       result = this.computeOdds2ArmiesLost(attArmies, defArmies);
+      if (result.success) {
+        this.saveResult(attArmies, defArmies, result);
+      }
     }
 
     return result;
@@ -229,6 +245,47 @@ class RDBComputeOdds {
     }
 
     return rems
+  }
+
+
+  // Checks if a result is already saved for A armies attacking D armies.
+  private resultIsSaved(attArmies: number, defArmies: number): boolean {
+
+    if (this.resultStore[attArmies] != undefined && this.resultStore[attArmies][defArmies] != undefined) {
+      return true;
+    }
+
+    else {
+      return false;
+    }
+
+  }
+
+
+  // Save a result for reuse.
+  private saveResult(attArmies: number, defArmies: number, result: ResultObject) {
+
+    let remOdds: RemainderOdds = {
+      remAtt: result.remAtt,
+      remDef: result.remDef
+    };
+
+    if (this.resultStore[attArmies] == undefined) {
+      this.resultStore[attArmies] = [];
+    }
+
+    this.resultStore[attArmies][defArmies] = remOdds;
+
+  }
+
+
+  // Reuse a result that has already been computed.
+  fetchSavedResult(attArmies: number, defArmies: number) {
+    let result: ResultObject = {success: true};
+    let res: RemainderOdds = this.resultStore[attArmies][defArmies];
+    result.remAtt = res.remAtt;
+    result.remDef = res.remDef;
+    return result;
   }
 
 
