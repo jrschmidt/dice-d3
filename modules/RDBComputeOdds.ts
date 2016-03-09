@@ -55,7 +55,7 @@ class RDBComputeOdds {
   constructor() {
 
     // Maximum armies for one side this module will accept.
-    this.maxArmies = 30;
+    this.maxArmies = 16;
   }
 
   // Recursively compute probabilities for the various possible
@@ -65,8 +65,6 @@ class RDBComputeOdds {
   // result set by the probability that that branch will be
   // reached.
   computeOdds(attArmies: number, defArmies: number) {
-    console.log(' ');
-    console.log('   computeOdds( ' + attArmies + ', ' + defArmies + ' )');
 
     let result: ResultObject = {success: false};
 

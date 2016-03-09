@@ -3,11 +3,9 @@ var RiskDiceProbabilities = require('../modules/RiskDiceProbabilities');
 var rdbProbs = new RiskDiceProbabilities();
 var RDBComputeOdds = (function () {
     function RDBComputeOdds() {
-        this.maxArmies = 30;
+        this.maxArmies = 16;
     }
     RDBComputeOdds.prototype.computeOdds = function (attArmies, defArmies) {
-        console.log(' ');
-        console.log('   computeOdds( ' + attArmies + ', ' + defArmies + ' )');
         var result = { success: false };
         if (this.isInputBad(attArmies, defArmies)) {
             result.err = "invalid input parameters";

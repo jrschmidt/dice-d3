@@ -12,14 +12,3 @@ var remDef = result.remDef;
 console.log(' ');
 console.log(result);
 console.log(' ');
-var attTotal = 0;
-var defTotal = 0;
-for (var i = 0; i < remAtt.length; i++) {
-    attTotal += remAtt[i];
-}
-for (var i = 0; i < remDef.length; i++) {
-    defTotal += remDef[i];
-}
-console.log("   probability of Attacker winning = " + attTotal);
-console.log("   probability of Defender winning = " + defTotal);
-console.log("");

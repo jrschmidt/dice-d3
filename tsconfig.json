@@ -28,6 +28,7 @@
         "modules/RiskDiceBattle.ts",
         "modules/RiskDiceProbabilities.ts",
         "test-odds/RDBCtest01.ts",
+        "test-odds/RDBCtest02.ts",
         "test-RDB/estimate06.ts",
         "test-RDB/estimate07.ts",
         "test-RDB/estimate08.ts",
