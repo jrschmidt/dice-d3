@@ -1,5 +1,7 @@
 // A module to compute the exact odds of winning a Risk dice battle when
-// Attacker and Defender each have a certain number of armies.
+// Attacker and Defender each have a certain number of armies. Also returns
+// the probability for Attacker or Defender to have a certain number of
+// armies remaining.
 // jrs 2016
 
 // Call with number of armies for Attacker and Defender, like this:
@@ -16,36 +18,16 @@ interface ResultObject {
     err?: string,
     errParams?: number[],
     remAtt?: number[],
-    remDef?: number[]
+    remDef?: number[],
+    branchHeight?: number,
+    branchDepth?: number
 }
 
 interface RemainderOdds {
   remAtt: number[],
   remDef: number[],
 }
-
-interface BranchesObject {
-  branchType: string
-}
-
-interface Branches2 extends BranchesObject {
-  pw: ProbabilityBranch,
-  pl: ProbabilityBranch
-}
-
-interface Branches3 extends BranchesObject {
-  pww: ProbabilityBranch,
-  pwl: ProbabilityBranch,
-  pll: ProbabilityBranch
-}
-
-interface ProbabilityBranch {
-  terminalBranch: boolean,
-  probability: number,
-  remAtt: number[],
-  remDef: number[]
-}
-
+ 
 
 class RDBComputeOdds {
   private maxArmies: number;
