@@ -20,12 +20,6 @@ var svg = d3.select('#chart1')
 ;
 
 
-// Tooltip
-var tip = svg.append('text')
-  .attr('class', 'tooltip')
-  .style('opacity', 0);
-
-
 // Caption
 var topCaptions = svg.append('text')
   .attr('x', 50)
@@ -104,31 +98,21 @@ svg.selectAll('green-dot')
   })
   .style('fill', '#669966')
   .attr('r', 19)
-  .on('mouseover', function(d) {
-    tip.text((d3.event.pageX) + ',' + (d3.event.pageY))
+  .on('mouseenter', function(d) {
+    tip.text(d[2] + '%')
       .style('opacity', 0.9)
-      .attr('x', (d3.event.pageX))
-      .attr('y', (d3.event.pageY));
+      .attr('x', (5 + 50 * d[0]))
+      .attr('y', (278 - 50 * d[1]));
   })
   .on('mouseout', function() {
     tip.style('opacity', 0);
   });
 
 
-svg.selectAll('percent-text')
-  .data(data)
-  .enter()
-  .append('text')
-  .attr('class', 'percent-text')
-  .style('stroke', '#333333')
-  .style('font', '9px sans-serif')
-  .style('text-anchor', 'middle')
-  .attr('x', function (d) {
-    return 25 + 50 * d[0];
-  })
-  .attr('y', function (d) {
-    return 275 - 50 * d[1]
-  })
-  .text( function (d) {
-    return d[2] + '%';
-  });
+  // Tooltip
+  var tip = svg.append('text')
+    .attr('class', 'tooltip')
+    .style('font', '10px sans-serif')
+    .style('font-weight', 'bold')
+    .style('color', '#ffffff')
+    .style('opacity', 0);
