@@ -98,7 +98,7 @@ svg.selectAll('green-dot')
   })
   .style('fill', '#669966')
   .attr('r', 19)
-  .on('mouseenter', function(d) {
+  .on('mouseover', function(d) {
     tip.text(d[2] + '%')
       .style('opacity', 0.9)
       .attr('x', (5 + 50 * d[0]))
