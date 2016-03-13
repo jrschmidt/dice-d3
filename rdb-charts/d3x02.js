@@ -3,6 +3,12 @@
 // Drawing the charts from pre-configured data
 
 
+var dataSpecs = {
+  'graphHeight': 3,
+  'graphDepth': 4
+};
+
+
 var dataNodes = [
   {'type': 'root', 'att': 3, 'def': 1, 'a': 0, 'b': 3},
   {'type': 'pw', 'att': 3, 'def': 0, 'a': 3, 'b': 1},
@@ -18,6 +24,12 @@ var dataLines = [
   {'end0': [1, 4], 'end1': [3, 3], 'type': 'pw', 'probs': 0.417},
   {'end0': [1, 4], 'end1': [3, 5], 'type': 'pl', 'probs': 0.583}
 ];
+
+
+// Compute graph specs
+var dx = Math.floor(500 / dataSpecs.graphDepth);
+var x0 = Math.floor(dx / 2);
+var dy = Math.floor(300 / dataSpecs.graphHeight);
 
 
 // SVG
