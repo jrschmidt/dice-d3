@@ -7,11 +7,11 @@ var dataSpecs = {
 };
 
 var dataNodes = [
-  {'type': 'root', 'att': 3, 'def': 1, 'a': 0, 'b': 3},
-  {'type': 'pw', 'att': 3, 'def': 0, 'a': 3, 'b': 1},
-  {'type': 'pl', 'att': 2, 'def': 1, 'a': 1, 'b': 4},
-  {'type': 'pw', 'att': 2, 'def': 0, 'a': 3, 'b': 3},
-  {'type': 'pl', 'att': 1, 'def': 1, 'a': 3, 'b': 5}
+  {'type': 'root', 'att': 3, 'def': 1, 'loc': [0, 3]},
+  {'type': 'pw', 'att': 3, 'def': 0, 'loc': [3, 1]},
+  {'type': 'pl', 'att': 2, 'def': 1, 'loc': [1, 4]},
+  {'type': 'pw', 'att': 2, 'def': 0, 'loc': [3, 3]},
+  {'type': 'pl', 'att': 1, 'def': 1, 'loc': [3, 5]}
 ];
 
 var dataLines = [

@@ -26,7 +26,7 @@ var topCaptions = svg.append('text')
   .text('Risk-style Dice Battles - Probability Tree Chart');
 
 
-  // Update Lines
+  // Update lines - draw the lines and set mouseover
   svg.selectAll('line')
     .data(dataLines)
     .enter()
@@ -44,8 +44,9 @@ var topCaptions = svg.append('text')
     });
 
 
-  // Update Nodes - Draw the Dot
-  svg.selectAll('node')
+
+  // Update nodes - draw the dot
+  svg.selectAll('node-dot')
     .data(dataNodes)
     .enter()
     .append('circle')
@@ -56,8 +57,8 @@ var topCaptions = svg.append('text')
     .style('fill', '#333399');
 
 
-    // Update Nodes - Show Number of Attacking Armies
-    svg.selectAll('node')
+    // Update nodes - show number of attacking armies
+    svg.selectAll('att-number')
     .data(dataNodes)
     .enter()
     .append('text')
@@ -69,8 +70,8 @@ var topCaptions = svg.append('text')
     .text(function (d) { return d.att.toString()});
 
 
-    // Update Nodes - Show Number of Defending Armies
-    svg.selectAll('node')
+    // Update nodes - show number of defending armies
+    svg.selectAll('def-number')
     .data(dataNodes)
     .enter()
     .append('text')
@@ -80,3 +81,21 @@ var topCaptions = svg.append('text')
     .style('stroke', '#993333')
     .style('font', '14px sans-serif')
     .text(function (d) { return d.def.toString()});
+
+
+    // Define percentage text
+    svg.selectAll('percent-text')
+    .data(dataLines)
+    .enter()
+    .append('text')
+    .attr('class', 'percent-text')
+    .attr('x', function (d) {
+      return Math.floor(x0 + dx * (d.end0[0] + d.end1[0]) / 2)
+    })
+    .attr('y', function (d) {
+      return Math.floor(dy * (d.end0[1] + d.end1[1]) / 2)
+    })
+    .style('font', '10px sans-serif')
+    .style('font-weight', 'bold')
+    .style('color', '#ff3333')
+    .text(function (d) { return d.probs.toString(); });
