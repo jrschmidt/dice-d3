@@ -1,3 +1,6 @@
+// Chart Data for 3 armies attacking 1 army
+// ChartData3v1.js
+
 var dataSpecs = {
   'graphHeight': 3,
   'graphDepth': 4

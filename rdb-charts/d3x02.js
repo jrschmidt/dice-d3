@@ -28,16 +28,55 @@ var topCaptions = svg.append('text')
 
   // Update Lines
   svg.selectAll('line')
-  .data(dataLines)
-  .enter()
-  .append('line')
-  .attr('class', 'line')
-  .attr('x1', function (d) { return x0 + dx * d.end0[0]; })
-  .attr('y1', function (d) { return dy * d.end0[1]; })
-  .attr('x2', function (d) { return x0 + dx * d.end1[0]; })
-  .attr('y2', function (d) { return dy * d.end1[1]; })
-  .style('stroke', function(d) {
-    if (d.type == 'pw' || d.type == 'pww') {return '#339933';}
-    if (d.type == 'pl' || d.type == 'pll') {return '#993333';}
-    if (d.type == 'pwl') {return '#333399';}
-  });
+    .data(dataLines)
+    .enter()
+    .append('line')
+    .attr('class', 'line')
+    .attr('x1', function (d) { return x0 + dx * d.end0[0]; })
+    .attr('y1', function (d) { return dy * d.end0[1]; })
+    .attr('x2', function (d) { return x0 + dx * d.end1[0]; })
+    .attr('y2', function (d) { return dy * d.end1[1]; })
+    .attr('stroke-width', 2)
+    .style('stroke', function(d) {
+      if (d.type == 'pw' || d.type == 'pww') {return '#339933';}
+      if (d.type == 'pl' || d.type == 'pll') {return '#993333';}
+      if (d.type == 'pwl') {return '#333399';}
+    });
+
+
+  // Update Nodes - Draw the Dot
+  svg.selectAll('node')
+    .data(dataNodes)
+    .enter()
+    .append('circle')
+    .attr('class', 'node-dot')
+    .attr('cx', function (d) { return x0 + dx * d.loc[0]; })
+    .attr('cy', function (d) { return dy * d.loc[1]; })
+    .attr('r', 4)
+    .style('fill', '#333399');
+
+
+    // Update Nodes - Show Number of Attacking Armies
+    svg.selectAll('node')
+    .data(dataNodes)
+    .enter()
+    .append('text')
+    .attr('class', 'att-number')
+    .attr('x', function (d) { return x0 + dx * d.loc[0] - 10; })
+    .attr('y', function (d) { return dy * d.loc[1] - 5; })
+    .style('stroke', '#339933')
+    .style('font', '14px sans-serif')
+    .text(function (d) { return d.att.toString()});
+
+
+    // Update Nodes - Show Number of Defending Armies
+    svg.selectAll('node')
+    .data(dataNodes)
+    .enter()
+    .append('text')
+    .attr('class', 'def-number')
+    .attr('x', function (d) { return x0 + dx * d.loc[0] - 10; })
+    .attr('y', function (d) { return dy * d.loc[1] + 15; })
+    .style('stroke', '#993333')
+    .style('font', '14px sans-serif')
+    .text(function (d) { return d.def.toString()});
