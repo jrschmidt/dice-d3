@@ -27,6 +27,7 @@
         "modules/RDBEstimateOdds.ts",
         "modules/RiskDiceBattle.ts",
         "modules/RiskDiceProbabilities.ts",
+        "rdb-charts/rdb-chart-data.ts",
         "test-odds/RDBCtest01.ts",
         "test-odds/RDBCtest02.ts",
         "test-RDB/estimate06.ts",
