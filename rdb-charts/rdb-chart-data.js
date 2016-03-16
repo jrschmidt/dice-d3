@@ -1,14 +1,13 @@
-var dataSpecs = {};
-var dataNodes = [];
-var dataLines = [];
-var rdbProbs = new RiskDiceProbabilities();
-var RDBComputeOdds = (function () {
-    function RDBComputeOdds() {
+var RDBComputeChartData = (function () {
+    function RDBComputeChartData() {
+        this.rdbProbs = new RiskDiceProbabilities();
         this.maxArmies = 30;
         this.resultStore = [];
     }
-    RDBComputeOdds.prototype.computeOdds = function (attArmies, defArmies) {
-        var result = { success: false };
+    RDBComputeChartData.prototype.computeOdds = function (attArmies, defArmies) {
+        var result = { success: true };
+        result.graphHeight = 3;
+        result.graphDepth = 3;
         if (this.isInputBad(attArmies, defArmies)) {
             result.err = "invalid input parameters";
             result.errParams = [attArmies, defArmies];
@@ -36,7 +35,7 @@ var RDBComputeOdds = (function () {
         }
         return result;
     };
-    RDBComputeOdds.prototype.computeOdds1ArmyLost = function (attArmies, defArmies) {
+    RDBComputeChartData.prototype.computeOdds1ArmyLost = function (attArmies, defArmies) {
         var result = { success: false };
         if (attArmies != 2 && defArmies != 1) {
             result.err = 'computeOdds1ArmyLost() called with bad parameters';
@@ -44,17 +43,15 @@ var RDBComputeOdds = (function () {
         }
         else {
             var dice = this.diceUsed(attArmies, defArmies);
-            var probs = rdbProbs.getProbs(dice[0], dice[1]);
+            var probs = this.rdbProbs.getProbs(dice[0], dice[1]);
             var pwResult = this.computeOdds(attArmies, defArmies - 1);
             var plResult = this.computeOdds(attArmies - 1, defArmies);
             var mergeResult = this.merge(attArmies, defArmies, probs, [pwResult, plResult]);
             result.success = true;
-            result.remAtt = mergeResult.remAtt;
-            result.remDef = mergeResult.remDef;
         }
         return result;
     };
-    RDBComputeOdds.prototype.computeOdds2ArmiesLost = function (attArmies, defArmies) {
+    RDBComputeChartData.prototype.computeOdds2ArmiesLost = function (attArmies, defArmies) {
         var result = { success: false };
         if (attArmies < 3 || defArmies < 2) {
             result.err = 'computeOdds2ArmiesLost() called with bad parameters';
@@ -62,18 +59,16 @@ var RDBComputeOdds = (function () {
         }
         else {
             var dice = this.diceUsed(attArmies, defArmies);
-            var probs = rdbProbs.getProbs(dice[0], dice[1]);
+            var probs = this.rdbProbs.getProbs(dice[0], dice[1]);
             var pwwResult = this.computeOdds(attArmies, defArmies - 2);
             var pwlResult = this.computeOdds(attArmies - 1, defArmies - 1);
             var pllResult = this.computeOdds(attArmies - 2, defArmies);
             var mergeResult = this.merge(attArmies, defArmies, probs, [pwwResult, pwlResult, pllResult]);
             result.success = true;
-            result.remAtt = mergeResult.remAtt;
-            result.remDef = mergeResult.remDef;
         }
         return result;
     };
-    RDBComputeOdds.prototype.terminalBranchWin = function (attArmies, defArmies) {
+    RDBComputeChartData.prototype.terminalBranchWin = function (attArmies, defArmies) {
         var result = { success: false };
         if (attArmies < 2 || defArmies > 0) {
             result.err = 'terminalBranchWin() called with bad parameters';
@@ -86,7 +81,7 @@ var RDBComputeOdds = (function () {
         }
         return result;
     };
-    RDBComputeOdds.prototype.terminalBranchLose = function (attArmies, defArmies) {
+    RDBComputeChartData.prototype.terminalBranchLose = function (attArmies, defArmies) {
         var result = { success: false };
         if (attArmies > 1 || defArmies < 1) {
             result.err = 'terminalBranchLose() called with bad parameters';
@@ -99,11 +94,11 @@ var RDBComputeOdds = (function () {
         }
         return result;
     };
-    RDBComputeOdds.prototype.terminalBranch = function (attArmies, defArmies) {
+    RDBComputeChartData.prototype.terminalBranch = function (attArmies, defArmies) {
         var result = { success: true };
         result.success = true;
-        result.branchHeight = 1;
-        result.branchDepth = 1;
+        result.graphHeight = 1;
+        result.graphDepth = 1;
         result.lines = [];
         result.nodes = [{
                 'type': 'root',
@@ -113,7 +108,31 @@ var RDBComputeOdds = (function () {
             }];
         return result;
     };
-    RDBComputeOdds.prototype.merge = function (maxAtt, maxDef, probs, results) {
+    RDBComputeChartData.prototype.merge = function (attArmies, defArmies, probs, results) {
+        var result = { success: true };
+        var height = 0;
+        var maxDepth = 0;
+        for (var i = 0; i < results.length; i++) {
+            height += results[i].graphHeight;
+            if (results[i].graphDepth > maxDepth) {
+                maxDepth = results[i].graphDepth;
+            }
+        }
+        result.graphHeight = height;
+        result.graphDepth = maxDepth + 1;
+        result.lines = this.mergeLines(probs, results);
+        result.nodes = this.mergeNodes(attArmies, defArmies, probs, results);
+        return result;
+    };
+    RDBComputeChartData.prototype.mergeLines = function (probs, results) {
+        var mergedLines = [];
+        return mergedLines;
+    };
+    RDBComputeChartData.prototype.mergeNodes = function (attArmies, defArmies, probs, results) {
+        var mergedNodes = [];
+        return mergedNodes;
+    };
+    RDBComputeChartData.prototype.mergeRemainderOdds = function (attArmies, defArmies, probs, results) {
         var rems = {
             remAtt: [0, 0],
             remDef: [0]
@@ -126,7 +145,7 @@ var RDBComputeOdds = (function () {
         for (var i = 0; i < results.length; i++) {
             remsArrayDef.push(results[i].remDef);
         }
-        for (var i = 2; i <= maxAtt; i++) {
+        for (var i = 2; i <= attArmies; i++) {
             var sum = 0;
             for (var j = 0; j < results.length; j++) {
                 if (remsArrayAtt[j].length > i) {
@@ -135,7 +154,7 @@ var RDBComputeOdds = (function () {
             }
             rems.remAtt.push(sum);
         }
-        for (var i = 1; i <= maxDef; i++) {
+        for (var i = 1; i <= defArmies; i++) {
             var sum = 0;
             for (var j = 0; j < results.length; j++) {
                 if (remsArrayDef[j].length > i) {
@@ -146,7 +165,7 @@ var RDBComputeOdds = (function () {
         }
         return rems;
     };
-    RDBComputeOdds.prototype.resultIsSaved = function (attArmies, defArmies) {
+    RDBComputeChartData.prototype.resultIsSaved = function (attArmies, defArmies) {
         if (this.resultStore[attArmies] != undefined && this.resultStore[attArmies][defArmies] != undefined) {
             return true;
         }
@@ -154,7 +173,7 @@ var RDBComputeOdds = (function () {
             return false;
         }
     };
-    RDBComputeOdds.prototype.saveResult = function (attArmies, defArmies, result) {
+    RDBComputeChartData.prototype.saveResult = function (attArmies, defArmies, result) {
         var remOdds = {
             remAtt: result.remAtt,
             remDef: result.remDef
@@ -164,14 +183,14 @@ var RDBComputeOdds = (function () {
         }
         this.resultStore[attArmies][defArmies] = remOdds;
     };
-    RDBComputeOdds.prototype.fetchSavedResult = function (attArmies, defArmies) {
+    RDBComputeChartData.prototype.fetchSavedResult = function (attArmies, defArmies) {
         var result = { success: true };
         var res = this.resultStore[attArmies][defArmies];
         result.remAtt = res.remAtt;
         result.remDef = res.remDef;
         return result;
     };
-    RDBComputeOdds.prototype.rems100Percent = function (max) {
+    RDBComputeChartData.prototype.rems100Percent = function (max) {
         var vals = [];
         for (var i = 0; i < max; i++) {
             vals.push(0);
@@ -179,7 +198,7 @@ var RDBComputeOdds = (function () {
         vals[max] = 1.0;
         return vals;
     };
-    RDBComputeOdds.prototype.isInputBad = function (attArmies, defArmies) {
+    RDBComputeChartData.prototype.isInputBad = function (attArmies, defArmies) {
         if (!(attArmies >= 1) ||
             !(defArmies >= 0) ||
             attArmies > this.maxArmies ||
@@ -192,7 +211,7 @@ var RDBComputeOdds = (function () {
             return false;
         }
     };
-    RDBComputeOdds.prototype.diceUsed = function (attArmies, defArmies) {
+    RDBComputeChartData.prototype.diceUsed = function (attArmies, defArmies) {
         var att;
         var def;
         if (attArmies > 3) {
@@ -224,7 +243,7 @@ var RDBComputeOdds = (function () {
         }
         return [att, def];
     };
-    return RDBComputeOdds;
+    return RDBComputeChartData;
 }());
 var RiskDiceProbabilities = (function () {
     function RiskDiceProbabilities() {
@@ -260,3 +279,22 @@ var RiskDiceProbabilities = (function () {
     };
     return RiskDiceProbabilities;
 }());
+var chartDataGenerator = new RDBComputeChartData();
+var result = chartDataGenerator.computeOdds(2, 0);
+var dataSpecs = {
+    'graphHeight': result.graphHeight,
+    'graphDepth': result.graphDepth
+};
+var dataNodes = [
+    { 'type': 'root', 'att': 3, 'def': 1, 'loc': [0, 3] },
+    { 'type': 'pw', 'att': 3, 'def': 0, 'loc': [2, 1] },
+    { 'type': 'pl', 'att': 2, 'def': 1, 'loc': [1, 4] },
+    { 'type': 'pw', 'att': 2, 'def': 0, 'loc': [2, 3] },
+    { 'type': 'pl', 'att': 1, 'def': 1, 'loc': [2, 5] }
+];
+var dataLines = [
+    { 'end0': [0, 3], 'end1': [2, 1], 'type': 'pw', 'probs': 0.579 },
+    { 'end0': [0, 3], 'end1': [1, 4], 'type': 'pl', 'probs': 0.421 },
+    { 'end0': [1, 4], 'end1': [2, 3], 'type': 'pw', 'probs': 0.417 },
+    { 'end0': [1, 4], 'end1': [2, 5], 'type': 'pl', 'probs': 0.583 }
+];

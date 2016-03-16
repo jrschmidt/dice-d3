@@ -21,6 +21,7 @@ var dataNodes = [
   {'type': 'pw', 'att': 2, 'def': 0, 'loc': [4, 11]},
   {'type': 'pl', 'att': 1, 'def': 1, 'loc': [4, 13]},
   {'type': 'pll', 'att': 1, 'def': 2, 'loc': [4, 15]},
+  {'type': 'pw', 'att': 2, 'def': 2, 'loc': [2, 19]},
   {'type': 'pll', 'att': 2, 'def': 3, 'loc': [1, 20]},
   {'type': 'pw', 'att': 2, 'def': 1, 'loc': [3, 18]},
   {'type': 'pw', 'att': 2, 'def': 0, 'loc': [4, 17]},
