@@ -71,19 +71,16 @@ class RDBComputeChartData {
   // reached.
   computeOdds(attArmies: number, defArmies: number): ResultObject {
 
-    // let result: ResultObject = {success: false};
-    let result: ResultObject = {success: true};
-    result.graphHeight = 3;
-    result.graphDepth = 3;
+    let result: ResultObject = {success: false};
 
     if (this.isInputBad(attArmies, defArmies)) {
       result.err = "invalid input parameters";
       result.errParams = [attArmies, defArmies];
     }
 
-    else if (this.resultIsSaved(attArmies, defArmies)) {
-      result = this.fetchSavedResult(attArmies, defArmies);
-    }
+    // else if (this.resultIsSaved(attArmies, defArmies)) {
+    //   result = this.fetchSavedResult(attArmies, defArmies);
+    // }
 
     else if (defArmies < 1) {
         result = this.terminalBranchWin(attArmies, defArmies);
@@ -95,16 +92,16 @@ class RDBComputeChartData {
 
     else if (defArmies < 2 || attArmies < 3) {
       result = this.computeOdds1ArmyLost(attArmies, defArmies);
-      if (result.success) {
-        this.saveResult(attArmies, defArmies, result);
-      }
+      // if (result.success) {
+      //   this.saveResult(attArmies, defArmies, result);
+      // }
     }
 
     else {
       result = this.computeOdds2ArmiesLost(attArmies, defArmies);
-      if (result.success) {
-        this.saveResult(attArmies, defArmies, result);
-      }
+      // if (result.success) {
+      //   this.saveResult(attArmies, defArmies, result);
+      // }
     }
 
     return result;
@@ -125,10 +122,7 @@ class RDBComputeChartData {
       let probs: number[] = this.rdbProbs.getProbs(dice[0], dice[1]);
       let pwResult: ResultObject = this.computeOdds(attArmies, defArmies - 1);
       let plResult: ResultObject = this.computeOdds(attArmies - 1, defArmies);
-      let mergeResult: ResultObject = this.merge(attArmies, defArmies, probs, [pwResult, plResult]);
-      result.success = true;
-      // result.remAtt = mergeResult.remAtt;
-      // result.remDef = mergeResult.remDef;
+      result = this.merge(attArmies, defArmies, probs, [pwResult, plResult]);
     }
 
     return result;
@@ -150,10 +144,7 @@ class RDBComputeChartData {
       let pwwResult: ResultObject = this.computeOdds(attArmies, defArmies - 2);
       let pwlResult: ResultObject = this.computeOdds(attArmies -1, defArmies - 1);
       let pllResult: ResultObject = this.computeOdds(attArmies - 2, defArmies);
-      let mergeResult: ResultObject = this.merge(attArmies, defArmies, probs, [pwwResult, pwlResult, pllResult]);
-      result.success = true;
-      // result.remAtt = mergeResult.remAtt;
-      // result.remDef = mergeResult.remDef;
+      result = this.merge(attArmies, defArmies, probs, [pwwResult, pwlResult, pllResult]);
     }
 
 
@@ -464,7 +455,7 @@ class RiskDiceProbabilities {
 
 let chartDataGenerator = new RDBComputeChartData();
 
-let result: ResultObject = chartDataGenerator.computeOdds(2, 0);
+let result: ResultObject = chartDataGenerator.computeOdds(3,1);
 
 
 
