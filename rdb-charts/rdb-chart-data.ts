@@ -228,7 +228,7 @@ class RDBComputeChartData {
     result.graphDepth = maxDepth + 1;
 
     result.lines = this.mergeLines(probs, results);
-    result.nodes = this.mergeNodes(attArmies, defArmies, height, probs, results);
+    result.nodes = this.mergeNodes(attArmies, defArmies, height, maxDepth + 1, probs, results);
 
     return result;
   }
@@ -242,18 +242,20 @@ class RDBComputeChartData {
 
 
   // Merge the arrays of node data and add a new root node.
-  private mergeNodes(attArmies: number, defArmies: number, height: number, probs: number[], results: ResultObject[]): NodeObject[] {
+  private mergeNodes(attArmies: number, defArmies: number, height: number, depth: number, probs: number[], results: ResultObject[]): NodeObject[] {
     let mergedNodes: NodeObject[] = [];
     let ht: number = 0;
 
     for (let br: number = 0; br < results.length; br ++) {
       let branchType: string = this.getBranchType(br, results.length);
+      let branchDepth: number = results[br].graphDepth;
       let branchNodes: NodeObject[] = results[br].nodes;
 
       for (let i: number = 0; i < branchNodes.length; i++) {
         let node: NodeObject = branchNodes[i];
         if (node.type == 'root') {node.type = branchType;}
-        node.loc[0] += 1;
+        if (node.def < 1 || node.att < 2) {node.loc[0] = depth - 1;}
+        else {node.loc[0] += 1;}
         node.loc[1] += 2 * ht;
         mergedNodes.push(node);
       }
@@ -500,7 +502,7 @@ class RiskDiceProbabilities {
 
 let chartDataGenerator = new RDBComputeChartData();
 
-let result: ResultObject = chartDataGenerator.computeOdds(3,1);
+let result: ResultObject = chartDataGenerator.computeOdds(2,2);
 
 
 
