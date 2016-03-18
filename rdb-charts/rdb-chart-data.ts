@@ -237,6 +237,52 @@ class RDBComputeChartData {
   // Merge the arrays of line data and add new lines to connect to the branches.
   private mergeLines(probs: number[], results: ResultObject[]): LineObject[] {
     let mergedLines: LineObject[] = [];
+
+
+    // TODO
+    // This should correctly add the new lines, but we still need to merge and
+    // adjust the existing lines from the branches.
+    // TODO
+    if (results.length < 3) {
+      mergedLines = [
+        {
+          'end0': [0, 2],
+          'end1': [1, 1],
+          'type': 'pw',
+          'probs': probs[0]
+        },
+        {
+          'end0': [0, 2],
+          'end1': [1, 3],
+          'type': 'pl',
+          'probs': probs[1]
+        }
+      ]
+    }
+
+    else {
+    mergedLines = [
+      {
+        'end0': [0, 3],
+        'end1': [1, 1],
+        'type': 'pww',
+        'probs': probs[0]
+      },
+      {
+        'end0': [0, 3],
+        'end1': [1, 3],
+        'type': 'pwl',
+        'probs': probs[1]
+      },
+      {
+        'end0': [0, 3],
+        'end1': [5, 1],
+        'type': 'pll',
+        'probs': probs[2]
+      }
+    ]
+  }
+
     return mergedLines;
   }
 
@@ -502,13 +548,13 @@ class RiskDiceProbabilities {
 
 let chartDataGenerator = new RDBComputeChartData();
 
-let result: ResultObject = chartDataGenerator.computeOdds(2,2);
+let result: ResultObject = chartDataGenerator.computeOdds(2,1);
 
 
 
 let dataNodes: NodeObject[] = result.nodes;
 
-// let dataLines: LineObject[] = result.lines;
+let dataLines: LineObject[] = result.lines;
 
 
 
@@ -528,7 +574,8 @@ let dataSpecs = {
 // ];
 
 
-let dataLines = [];
+// let dataLines = [];
+
 // let dataLines = [
 //   {'end0': [0, 3], 'end1': [2, 1], 'type': 'pw', 'probs': 0.579},
 //   {'end0': [0, 3], 'end1': [1, 4], 'type': 'pl', 'probs': 0.421},

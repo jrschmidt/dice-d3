@@ -113,6 +113,44 @@ var RDBComputeChartData = (function () {
     };
     RDBComputeChartData.prototype.mergeLines = function (probs, results) {
         var mergedLines = [];
+        if (results.length < 3) {
+            mergedLines = [
+                {
+                    'end0': [0, 2],
+                    'end1': [1, 1],
+                    'type': 'pw',
+                    'probs': probs[0]
+                },
+                {
+                    'end0': [0, 2],
+                    'end1': [1, 3],
+                    'type': 'pl',
+                    'probs': probs[1]
+                }
+            ];
+        }
+        else {
+            mergedLines = [
+                {
+                    'end0': [0, 3],
+                    'end1': [1, 1],
+                    'type': 'pww',
+                    'probs': probs[0]
+                },
+                {
+                    'end0': [0, 3],
+                    'end1': [1, 3],
+                    'type': 'pwl',
+                    'probs': probs[1]
+                },
+                {
+                    'end0': [0, 3],
+                    'end1': [5, 1],
+                    'type': 'pll',
+                    'probs': probs[2]
+                }
+            ];
+        }
         return mergedLines;
     };
     RDBComputeChartData.prototype.mergeNodes = function (attArmies, defArmies, height, depth, probs, results) {
@@ -318,10 +356,10 @@ var RiskDiceProbabilities = (function () {
     return RiskDiceProbabilities;
 }());
 var chartDataGenerator = new RDBComputeChartData();
-var result = chartDataGenerator.computeOdds(2, 2);
+var result = chartDataGenerator.computeOdds(2, 1);
 var dataNodes = result.nodes;
+var dataLines = result.lines;
 var dataSpecs = {
     'graphHeight': result.graphHeight,
     'graphDepth': result.graphDepth
 };
-var dataLines = [];
