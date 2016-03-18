@@ -228,7 +228,7 @@ class RDBComputeChartData {
     result.graphDepth = maxDepth + 1;
 
     result.lines = this.mergeLines(probs, results);
-    result.nodes = this.mergeNodes(attArmies, defArmies, probs, results);
+    result.nodes = this.mergeNodes(attArmies, defArmies, height, probs, results);
 
     return result;
   }
@@ -242,8 +242,34 @@ class RDBComputeChartData {
 
 
   // Merge the arrays of node data and add a new root node.
-  private mergeNodes(attArmies: number, defArmies: number, probs: number[], results: ResultObject[]): NodeObject[] {
+  private mergeNodes(attArmies: number, defArmies: number, height: number, probs: number[], results: ResultObject[]): NodeObject[] {
     let mergedNodes: NodeObject[] = [];
+    let ht: number = 0;
+
+    for (let br: number = 0; br < results.length; br ++) {
+      let branchType: string = this.getBranchType(br, results.length);
+      let branchNodes: NodeObject[] = results[br].nodes;
+
+      for (let i: number = 0; i < branchNodes.length; i++) {
+        let node: NodeObject = branchNodes[i];
+        if (node.type == 'root') {node.type = branchType;}
+        node.loc[0] += 1;
+        node.loc[1] += 2 * ht;
+        mergedNodes.push(node);
+      }
+
+    ht += results[br].graphHeight;
+    }
+
+    let newRoot: NodeObject = {
+      type: 'root',
+      att: attArmies,
+      def: defArmies,
+      loc: [0, ht]
+    };
+
+    mergedNodes.push(newRoot);
+
     return mergedNodes;
   }
 
@@ -299,6 +325,25 @@ class RDBComputeChartData {
     }
 
     return rems
+  }
+
+
+
+  private getBranchType(branchOrdinal: number, numberOfBranches: number): string {
+    let type: string;
+
+    if (numberOfBranches == 2) {
+      if (branchOrdinal == 0) {type = 'pw';}
+      else {type = 'pl';}
+    }
+
+    else {
+      if (branchOrdinal == 0) {type = 'pww';}
+      else if (branchOrdinal == 1) {type = 'pwl';}
+      else {type = 'pll';}
+    }
+
+    return type;
   }
 
 
@@ -459,7 +504,7 @@ let result: ResultObject = chartDataGenerator.computeOdds(3,1);
 
 
 
-// let dataNodes: NodeObject[] = result.nodes;
+let dataNodes: NodeObject[] = result.nodes;
 
 // let dataLines: LineObject[] = result.lines;
 
@@ -472,17 +517,19 @@ let dataSpecs = {
 
 
 
-let dataNodes = [
-  {'type': 'root', 'att': 3, 'def': 1, 'loc': [0, 3]},
-  {'type': 'pw', 'att': 3, 'def': 0, 'loc': [2, 1]},
-  {'type': 'pl', 'att': 2, 'def': 1, 'loc': [1, 4]},
-  {'type': 'pw', 'att': 2, 'def': 0, 'loc': [2, 3]},
-  {'type': 'pl', 'att': 1, 'def': 1, 'loc': [2, 5]}
-];
+// let dataNodes = [
+//   {'type': 'root', 'att': 3, 'def': 1, 'loc': [0, 3]},
+//   {'type': 'pw', 'att': 3, 'def': 0, 'loc': [2, 1]},
+//   {'type': 'pl', 'att': 2, 'def': 1, 'loc': [1, 4]},
+//   {'type': 'pw', 'att': 2, 'def': 0, 'loc': [2, 3]},
+//   {'type': 'pl', 'att': 1, 'def': 1, 'loc': [2, 5]}
+// ];
 
-let dataLines = [
-  {'end0': [0, 3], 'end1': [2, 1], 'type': 'pw', 'probs': 0.579},
-  {'end0': [0, 3], 'end1': [1, 4], 'type': 'pl', 'probs': 0.421},
-  {'end0': [1, 4], 'end1': [2, 3], 'type': 'pw', 'probs': 0.417},
-  {'end0': [1, 4], 'end1': [2, 5], 'type': 'pl', 'probs': 0.583}
-];
+
+let dataLines = [];
+// let dataLines = [
+//   {'end0': [0, 3], 'end1': [2, 1], 'type': 'pw', 'probs': 0.579},
+//   {'end0': [0, 3], 'end1': [1, 4], 'type': 'pl', 'probs': 0.421},
+//   {'end0': [1, 4], 'end1': [2, 3], 'type': 'pw', 'probs': 0.417},
+//   {'end0': [1, 4], 'end1': [2, 5], 'type': 'pl', 'probs': 0.583}
+// ];
