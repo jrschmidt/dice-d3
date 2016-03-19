@@ -15,8 +15,8 @@ var dataNodes = [
 ];
 
 var dataLines = [
-  {'end0': [0, 3], 'end1': [2, 1], 'type': 'pw', 'probs': 0.579},
-  {'end0': [0, 3], 'end1': [1, 4], 'type': 'pl', 'probs': 0.421},
-  {'end0': [1, 4], 'end1': [2, 3], 'type': 'pw', 'probs': 0.417},
-  {'end0': [1, 4], 'end1': [2, 5], 'type': 'pl', 'probs': 0.583}
+  {'end0': [0, 3], 'end1': [2, 1], 'type': 'pw', 'probsStr': '0.579'},
+  {'end0': [0, 3], 'end1': [1, 4], 'type': 'pl', 'probsStr': '0.421'},
+  {'end0': [1, 4], 'end1': [2, 3], 'type': 'pw', 'probsStr': '0.417'},
+  {'end0': [1, 4], 'end1': [2, 5], 'type': 'pl', 'probsStr': '0.583'}
 ];

@@ -19,13 +19,13 @@ interface ResultObject {
 }
 
 // Data for a line on the chart. `end0` and `end1` are the "chart coordinates"
-// for the line. `probs` is the probability that the branch represented by the
-// line will be chosen from the node that proceeds it.
+// for the line. `probsStr` is the probability that the branch represented by the
+// line will be chosen from the node that proceeds it, formatted as a string.
 interface LineObject {
   end0: number[],
   end1: number[],
   type: string,
-  probs: number
+  probsStr: string
 }
 
 // `att` and `def` are the number of attacking and defending armies. `loc`
@@ -68,7 +68,8 @@ class RDBComputeChartData {
   // computing probabilities for each permutation branching
   // from P(A,D) and merging those results, multiplying each
   // result set by the probability that that branch will be
-  // reached.
+  // reached. Also, compute the data needed to make a graph
+  // of the branches and results.
   computeOdds(attArmies: number, defArmies: number): ResultObject {
 
     let result: ResultObject = {success: false};
@@ -119,10 +120,10 @@ class RDBComputeChartData {
 
     else {
       let dice: number[] = this.diceUsed(attArmies, defArmies);
-      let probs: number[] = this.rdbProbs.getProbs(dice[0], dice[1]);
+      let probsStr: string[] = this.rdbProbs.getProbsStr(dice[0], dice[1]);
       let pwResult: ResultObject = this.computeOdds(attArmies, defArmies - 1);
       let plResult: ResultObject = this.computeOdds(attArmies - 1, defArmies);
-      result = this.merge(attArmies, defArmies, probs, [pwResult, plResult]);
+      result = this.merge(attArmies, defArmies, probsStr, [pwResult, plResult]);
     }
 
     return result;
@@ -140,11 +141,11 @@ class RDBComputeChartData {
 
     else {
       let dice: number[] = this.diceUsed(attArmies, defArmies);
-      let probs: number[] = this.rdbProbs.getProbs(dice[0], dice[1]);
+      let probsStr: string[] = this.rdbProbs.getProbsStr(dice[0], dice[1]);
       let pwwResult: ResultObject = this.computeOdds(attArmies, defArmies - 2);
       let pwlResult: ResultObject = this.computeOdds(attArmies -1, defArmies - 1);
       let pllResult: ResultObject = this.computeOdds(attArmies - 2, defArmies);
-      result = this.merge(attArmies, defArmies, probs, [pwwResult, pwlResult, pllResult]);
+      result = this.merge(attArmies, defArmies, probsStr, [pwwResult, pwlResult, pllResult]);
     }
 
 
@@ -215,7 +216,7 @@ class RDBComputeChartData {
   }
 
   // Merge the results of two or three branches.
-  private merge(attArmies: number, defArmies: number, probs: number[], results: ResultObject[]): ResultObject {
+  private merge(attArmies: number, defArmies: number, probsStr: string[], results: ResultObject[]): ResultObject {
     let result: ResultObject = {success: true};
 
     let height: number = 0;
@@ -227,68 +228,116 @@ class RDBComputeChartData {
     result.graphHeight = height;
     result.graphDepth = maxDepth + 1;
 
-    result.lines = this.mergeLines(probs, results);
-    result.nodes = this.mergeNodes(attArmies, defArmies, height, maxDepth + 1, probs, results);
+    result.lines = this.mergeLines(maxDepth, probsStr, results);
+    result.nodes = this.mergeNodes(attArmies, defArmies, height, maxDepth + 1, results);
 
     return result;
   }
 
 
   // Merge the arrays of line data and add new lines to connect to the branches.
-  private mergeLines(probs: number[], results: ResultObject[]): LineObject[] {
+  private mergeLines(maxDepth: number, probsStr: string[], results: ResultObject[]): LineObject[] {
     let mergedLines: LineObject[] = [];
 
-
-    // TODO
-    // This should correctly add the new lines, but we still need to merge and
-    // adjust the existing lines from the branches.
-    // TODO
-    if (results.length < 3) {
-      mergedLines = [
-        {
-          'end0': [0, 2],
-          'end1': [1, 1],
-          'type': 'pw',
-          'probs': probs[0]
-        },
-        {
-          'end0': [0, 2],
-          'end1': [1, 3],
-          'type': 'pl',
-          'probs': probs[1]
-        }
-      ]
+    let br: string[];
+    if (results.length > 2) {
+      br = ['pww', 'pwl', 'pll'];
+    }
+    else {
+      br = ['pw', 'pl'];
     }
 
-    else {
-    mergedLines = [
-      {
-        'end0': [0, 3],
-        'end1': [1, 1],
-        'type': 'pww',
-        'probs': probs[0]
-      },
-      {
-        'end0': [0, 3],
-        'end1': [1, 3],
-        'type': 'pwl',
-        'probs': probs[1]
-      },
-      {
-        'end0': [0, 3],
-        'end1': [5, 1],
-        'type': 'pll',
-        'probs': probs[2]
+    let dy: number[] = [0, 2 * results[0].graphHeight];
+    if (results.length > 2) {dy.push(2 * (results[0].graphHeight + results[1].graphHeight) );}
+
+    for (let i: number = 0; i < results.length; i++) {
+      for (let j: number = 0; j < results[i].lines.length; j++) {
+        let changedLine: LineObject = results[i].lines[j];
+
+        changedLine.end0[0] += 1;
+        changedLine.end0[1] += dy[i];
+
+        if (changedLine.end1[0] >= results[i].graphDepth - 1) {changedLine.end1[0] = maxDepth;}
+        else {changedLine.end1[0] += 1;}
+        changedLine.end1[1] += dy[i];
+
+        if (changedLine.type == 'root') {changedLine.type = br[i];}
+        mergedLines.push(changedLine);
       }
-    ]
+    }
+
+    mergedLines = mergedLines.concat(this.makeNewLines(results, maxDepth, probsStr));
+
+     return mergedLines;
   }
 
-    return mergedLines;
-  }
+
+
+ private makeNewLines(results: ResultObject[], maxDepth: number, probsStr: string[]): LineObject[] {
+  let newLines: LineObject[] = [];
+  let newLine: LineObject;
+  let x1: number;
+  let br: string;
+
+  let ht: number = 0;
+  for (let i: number = 0; i < results.length; i++) {ht += results[i].graphHeight;}
+
+
+  // First branch (PW or PWW)
+  if (results.length < 3) {br = 'pw';}
+  else {br = 'pww';}
+
+  if (results[0].lines.length > 0) {x1 = 1;}
+  else {x1 = maxDepth;}
+
+  newLine = {
+    'end0': [0, ht],
+    'end1': [x1, results[0].graphHeight],
+    'type': br,
+    'probsStr': probsStr[0]
+  };
+  newLines.push(newLine);
+
+
+  // Second branch (PL or PWL)
+  if (results.length < 3) {br = 'pl';}
+  else {br = 'pwl';}
+
+  if (results[1].lines.length > 0) {x1 = 1;}
+  else {x1 = maxDepth;}
+
+  newLine = {
+    'end0': [0, ht],
+    'end1': [x1, 2 * results[0].graphHeight + results[1].graphHeight],
+    'type': br,
+    'probsStr': probsStr[1]
+  };
+  newLines.push(newLine);
+
+
+  // Third branch (PLL)
+  if (results.length == 3) {
+
+    if (results[2].lines.length > 0) {x1 = 1;}
+    else {x1 = maxDepth;}
+
+    newLine = {
+      'end0': [0, ht],
+      'end1': [x1, 2 * (results[0].graphHeight + results[1].graphHeight) + results[2].graphHeight],
+      'type': 'pll',
+      'probsStr': probsStr[2]
+    };
+    newLines.push(newLine);
+    }
+
+  return newLines;
+
+}
+
 
 
   // Merge the arrays of node data and add a new root node.
-  private mergeNodes(attArmies: number, defArmies: number, height: number, depth: number, probs: number[], results: ResultObject[]): NodeObject[] {
+  private mergeNodes(attArmies: number, defArmies: number, height: number, depth: number, results: ResultObject[]): NodeObject[] {
     let mergedNodes: NodeObject[] = [];
     let ht: number = 0;
 
@@ -489,56 +538,78 @@ class RDBComputeChartData {
 class RiskDiceProbabilities {
 
   private probs;
+  private probsStr;
 
 
   constructor() {
-    this.probs = [ [], [], [], [] ];
+    let probs: number[][];
+    let probsStr: string[][];
     let pw: number;
     let pl: number;
     let pww: number;
     let pwl: number;
     let pll: number;
 
+    this.probs = [ [], [], [], [] ];
+    this.probsStr = [ [], [], [], [] ];
+
     // Probabilities for Attacker rolling 1 die and Defender rolling 1 die.
+    // Approximate values are 0.417, 0.583
     pw = 15 / 36;
     pl = 21 / 36;
     this.probs[1][1] = [pw, pl];
+    this.probsStr[1][1] = ['0.417', '0.583'];
 
     // Probabilities for Attacker rolling 1 die and Defender rolling 2 dice.
+    // Approximate values are 0.255, 0.745
     pw = 55 / 216;
     pl = 161 / 216;
     this.probs[1][2] = [pw, pl];
+    this.probsStr[1][2] = ['0.255', '0.745'];
 
     // Probabilities for Attacker rolling 2 dice and Defender rolling 1 die.
+    // Approximate values are 0.579, 0.421
     pw = 125 / 216;
     pl = 91 / 216;
     this.probs[2][1] = [pw, pl];
+    this.probsStr[2][1] = ['0.579', '0.421'];
 
     // Probabilities for Attacker rolling 2 dice and Defender rolling 2 dice.
+    // Approximate values are 0.228, 0.324, 0.448
     pww = 295 / 1296;
     pwl = 420 / 1296;
     pll = 581 / 1296;
     this.probs[2][2] = [pww, pwl, pll];
+    this.probsStr[2][2] = ['0.228', '0.324', '0.448'];
 
     // Probabilities for Attacker rolling 3 dice and Defender rolling 1 die.
+    // Approximate values are 0.659, 0.341
     pw = 855 / 1296;
     pl = 441 / 1296;
     this.probs[3][1] = [pw, pl];
+    this.probsStr[3][1] = ['0.659', '0.341'];
 
     // Probabilities for Attacker rolling 3 dice and Defender rolling 2 dice.
+    // Approximate values are 0.372, 0.335, 0.293
     pww = 2890 / 7776;
     pwl = 2611 / 7776;
     pll = 2275 / 7776;
     this.probs[3][2] = [pww, pwl, pll];
+    this.probsStr[3][2] = ['0.372', '0.335', '0.293'];
 
   }  // end of constructor()
 
 
-  // Getter method
+  // Getter methods
 
   // Return probabilities for a given number of Attacker and Defender dice
   getProbs(dA: number, dD: number): number[] {
     return this.probs[dA][dD];
+  }
+
+  // Return probabilities for a given number of Attacker and Defender dice
+  getProbsStr(dA: number, dD: number): string[] {
+    return this.probsStr[dA][dD];
   }
 
 
@@ -548,37 +619,14 @@ class RiskDiceProbabilities {
 
 let chartDataGenerator = new RDBComputeChartData();
 
-let result: ResultObject = chartDataGenerator.computeOdds(2,1);
-
+let result: ResultObject = chartDataGenerator.computeOdds(5,2);
 
 
 let dataNodes: NodeObject[] = result.nodes;
 
 let dataLines: LineObject[] = result.lines;
 
-
-
 let dataSpecs = {
   'graphHeight': result.graphHeight,
   'graphDepth': result.graphDepth
 };
-
-
-
-// let dataNodes = [
-//   {'type': 'root', 'att': 3, 'def': 1, 'loc': [0, 3]},
-//   {'type': 'pw', 'att': 3, 'def': 0, 'loc': [2, 1]},
-//   {'type': 'pl', 'att': 2, 'def': 1, 'loc': [1, 4]},
-//   {'type': 'pw', 'att': 2, 'def': 0, 'loc': [2, 3]},
-//   {'type': 'pl', 'att': 1, 'def': 1, 'loc': [2, 5]}
-// ];
-
-
-// let dataLines = [];
-
-// let dataLines = [
-//   {'end0': [0, 3], 'end1': [2, 1], 'type': 'pw', 'probs': 0.579},
-//   {'end0': [0, 3], 'end1': [1, 4], 'type': 'pl', 'probs': 0.421},
-//   {'end0': [1, 4], 'end1': [2, 3], 'type': 'pw', 'probs': 0.417},
-//   {'end0': [1, 4], 'end1': [2, 5], 'type': 'pl', 'probs': 0.583}
-// ];

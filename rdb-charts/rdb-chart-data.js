@@ -32,10 +32,10 @@ var RDBComputeChartData = (function () {
         }
         else {
             var dice = this.diceUsed(attArmies, defArmies);
-            var probs = this.rdbProbs.getProbs(dice[0], dice[1]);
+            var probsStr = this.rdbProbs.getProbsStr(dice[0], dice[1]);
             var pwResult = this.computeOdds(attArmies, defArmies - 1);
             var plResult = this.computeOdds(attArmies - 1, defArmies);
-            result = this.merge(attArmies, defArmies, probs, [pwResult, plResult]);
+            result = this.merge(attArmies, defArmies, probsStr, [pwResult, plResult]);
         }
         return result;
     };
@@ -47,11 +47,11 @@ var RDBComputeChartData = (function () {
         }
         else {
             var dice = this.diceUsed(attArmies, defArmies);
-            var probs = this.rdbProbs.getProbs(dice[0], dice[1]);
+            var probsStr = this.rdbProbs.getProbsStr(dice[0], dice[1]);
             var pwwResult = this.computeOdds(attArmies, defArmies - 2);
             var pwlResult = this.computeOdds(attArmies - 1, defArmies - 1);
             var pllResult = this.computeOdds(attArmies - 2, defArmies);
-            result = this.merge(attArmies, defArmies, probs, [pwwResult, pwlResult, pllResult]);
+            result = this.merge(attArmies, defArmies, probsStr, [pwwResult, pwlResult, pllResult]);
         }
         return result;
     };
@@ -95,7 +95,7 @@ var RDBComputeChartData = (function () {
             }];
         return result;
     };
-    RDBComputeChartData.prototype.merge = function (attArmies, defArmies, probs, results) {
+    RDBComputeChartData.prototype.merge = function (attArmies, defArmies, probsStr, results) {
         var result = { success: true };
         var height = 0;
         var maxDepth = 0;
@@ -107,53 +107,109 @@ var RDBComputeChartData = (function () {
         }
         result.graphHeight = height;
         result.graphDepth = maxDepth + 1;
-        result.lines = this.mergeLines(probs, results);
-        result.nodes = this.mergeNodes(attArmies, defArmies, height, maxDepth + 1, probs, results);
+        result.lines = this.mergeLines(maxDepth, probsStr, results);
+        result.nodes = this.mergeNodes(attArmies, defArmies, height, maxDepth + 1, results);
         return result;
     };
-    RDBComputeChartData.prototype.mergeLines = function (probs, results) {
+    RDBComputeChartData.prototype.mergeLines = function (maxDepth, probsStr, results) {
         var mergedLines = [];
-        if (results.length < 3) {
-            mergedLines = [
-                {
-                    'end0': [0, 2],
-                    'end1': [1, 1],
-                    'type': 'pw',
-                    'probs': probs[0]
-                },
-                {
-                    'end0': [0, 2],
-                    'end1': [1, 3],
-                    'type': 'pl',
-                    'probs': probs[1]
-                }
-            ];
+        var br;
+        if (results.length > 2) {
+            br = ['pww', 'pwl', 'pll'];
         }
         else {
-            mergedLines = [
-                {
-                    'end0': [0, 3],
-                    'end1': [1, 1],
-                    'type': 'pww',
-                    'probs': probs[0]
-                },
-                {
-                    'end0': [0, 3],
-                    'end1': [1, 3],
-                    'type': 'pwl',
-                    'probs': probs[1]
-                },
-                {
-                    'end0': [0, 3],
-                    'end1': [5, 1],
-                    'type': 'pll',
-                    'probs': probs[2]
-                }
-            ];
+            br = ['pw', 'pl'];
         }
+        var dy = [0, 2 * results[0].graphHeight];
+        if (results.length > 2) {
+            dy.push(2 * (results[0].graphHeight + results[1].graphHeight));
+        }
+        for (var i = 0; i < results.length; i++) {
+            for (var j = 0; j < results[i].lines.length; j++) {
+                var changedLine = results[i].lines[j];
+                changedLine.end0[0] += 1;
+                changedLine.end0[1] += dy[i];
+                if (changedLine.end1[0] >= results[i].graphDepth - 1) {
+                    changedLine.end1[0] = maxDepth;
+                }
+                else {
+                    changedLine.end1[0] += 1;
+                }
+                changedLine.end1[1] += dy[i];
+                if (changedLine.type == 'root') {
+                    changedLine.type = br[i];
+                }
+                mergedLines.push(changedLine);
+            }
+        }
+        mergedLines = mergedLines.concat(this.makeNewLines(results, maxDepth, probsStr));
         return mergedLines;
     };
-    RDBComputeChartData.prototype.mergeNodes = function (attArmies, defArmies, height, depth, probs, results) {
+    RDBComputeChartData.prototype.makeNewLines = function (results, maxDepth, probsStr) {
+        var newLines = [];
+        var newLine;
+        var x1;
+        var br;
+        var ht = 0;
+        for (var i = 0; i < results.length; i++) {
+            ht += results[i].graphHeight;
+        }
+        if (results.length < 3) {
+            br = 'pw';
+        }
+        else {
+            br = 'pww';
+        }
+        if (results[0].lines.length > 0) {
+            x1 = 1;
+        }
+        else {
+            x1 = maxDepth;
+        }
+        newLine = {
+            'end0': [0, ht],
+            'end1': [x1, results[0].graphHeight],
+            'type': br,
+            'probsStr': probsStr[0]
+        };
+        newLines.push(newLine);
+        if (results.length < 3) {
+            br = 'pl';
+        }
+        else {
+            br = 'pwl';
+        }
+        if (results[1].lines.length > 0) {
+            x1 = 1;
+        }
+        else {
+            x1 = maxDepth;
+        }
+        newLine = {
+            'end0': [0, ht],
+            'end1': [x1, 2 * results[0].graphHeight + results[1].graphHeight],
+            'type': br,
+            'probsStr': probsStr[1]
+        };
+        newLines.push(newLine);
+        if (results.length == 3) {
+            if (results[2].lines.length > 0) {
+                x1 = 1;
+            }
+            else {
+                x1 = maxDepth;
+            }
+            newLine = {
+                'end0': [0, ht],
+                'end1': [x1, 2 * (results[0].graphHeight + results[1].graphHeight) + results[2].graphHeight],
+                'type': 'pll',
+                'probsStr': probsStr[2]
+            };
+            newLines.push(newLine);
+        }
+        return newLines;
+    };
+    RDBComputeChartData.prototype.mergeNodes = function (attArmies, defArmies, height, depth, results) {
         var mergedNodes = [];
         var ht = 0;
         for (var br = 0; br < results.length; br++) {
@@ -323,40 +379,52 @@ var RDBComputeChartData = (function () {
 }());
 var RiskDiceProbabilities = (function () {
     function RiskDiceProbabilities() {
-        this.probs = [[], [], [], []];
+        var probs;
+        var probsStr;
         var pw;
         var pl;
         var pww;
         var pwl;
         var pll;
+        this.probs = [[], [], [], []];
+        this.probsStr = [[], [], [], []];
         pw = 15 / 36;
         pl = 21 / 36;
         this.probs[1][1] = [pw, pl];
+        this.probsStr[1][1] = ['0.417', '0.583'];
         pw = 55 / 216;
         pl = 161 / 216;
         this.probs[1][2] = [pw, pl];
+        this.probsStr[1][2] = ['0.255', '0.745'];
         pw = 125 / 216;
         pl = 91 / 216;
         this.probs[2][1] = [pw, pl];
+        this.probsStr[2][1] = ['0.579', '0.421'];
         pww = 295 / 1296;
         pwl = 420 / 1296;
         pll = 581 / 1296;
         this.probs[2][2] = [pww, pwl, pll];
+        this.probsStr[2][2] = ['0.228', '0.324', '0.448'];
         pw = 855 / 1296;
         pl = 441 / 1296;
         this.probs[3][1] = [pw, pl];
+        this.probsStr[3][1] = ['0.659', '0.341'];
         pww = 2890 / 7776;
         pwl = 2611 / 7776;
         pll = 2275 / 7776;
         this.probs[3][2] = [pww, pwl, pll];
+        this.probsStr[3][2] = ['0.372', '0.335', '0.293'];
     }
     RiskDiceProbabilities.prototype.getProbs = function (dA, dD) {
         return this.probs[dA][dD];
     };
+    RiskDiceProbabilities.prototype.getProbsStr = function (dA, dD) {
+        return this.probsStr[dA][dD];
+    };
     return RiskDiceProbabilities;
 }());
 var chartDataGenerator = new RDBComputeChartData();
-var result = chartDataGenerator.computeOdds(2, 1);
+var result = chartDataGenerator.computeOdds(5, 2);
 var dataNodes = result.nodes;
 var dataLines = result.lines;
 var dataSpecs = {

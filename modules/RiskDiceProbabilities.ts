@@ -42,33 +42,41 @@
 class RiskDiceProbabilities {
 
   private probs;
+  private probsStr;
 
 
   constructor() {
-    this.probs = [ [], [], [], [] ];
+    let probs: number[][];
+    let probsStr: string[][];
     let pw: number;
     let pl: number;
     let pww: number;
     let pwl: number;
     let pll: number;
 
+    this.probs = [ [], [], [], [] ];
+    this.probsStr = [ [], [], [], [] ];
+
     // Probabilities for Attacker rolling 1 die and Defender rolling 1 die.
     // Approximate values are 0.417, 0.583
     pw = 15 / 36;
     pl = 21 / 36;
     this.probs[1][1] = [pw, pl];
+    this.probsStr[1][1] = ['0.417', '0.583'];
 
     // Probabilities for Attacker rolling 1 die and Defender rolling 2 dice.
     // Approximate values are 0.255, 0.745
     pw = 55 / 216;
     pl = 161 / 216;
     this.probs[1][2] = [pw, pl];
+    this.probsStr[1][2] = ['0.255', '0.745'];
 
     // Probabilities for Attacker rolling 2 dice and Defender rolling 1 die.
     // Approximate values are 0.579, 0.421
     pw = 125 / 216;
     pl = 91 / 216;
     this.probs[2][1] = [pw, pl];
+    this.probsStr[2][1] = ['0.579', '0.421'];
 
     // Probabilities for Attacker rolling 2 dice and Defender rolling 2 dice.
     // Approximate values are 0.228, 0.324, 0.448
@@ -76,12 +84,14 @@ class RiskDiceProbabilities {
     pwl = 420 / 1296;
     pll = 581 / 1296;
     this.probs[2][2] = [pww, pwl, pll];
+    this.probsStr[2][2] = ['0.228', '0.324', '0.448'];
 
     // Probabilities for Attacker rolling 3 dice and Defender rolling 1 die.
     // Approximate values are 0.659, 0.341
     pw = 855 / 1296;
     pl = 441 / 1296;
     this.probs[3][1] = [pw, pl];
+    this.probsStr[3][1] = ['0.659', '0.341'];
 
     // Probabilities for Attacker rolling 3 dice and Defender rolling 2 dice.
     // Approximate values are 0.372, 0.335, 0.293
@@ -89,15 +99,21 @@ class RiskDiceProbabilities {
     pwl = 2611 / 7776;
     pll = 2275 / 7776;
     this.probs[3][2] = [pww, pwl, pll];
+    this.probsStr[3][2] = ['0.372', '0.335', '0.293'];
 
   }  // end of constructor()
 
 
-  // Getter method
+  // Getter methods
 
   // Return probabilities for a given number of Attacker and Defender dice
   getProbs(dA: number, dD: number): number[] {
     return this.probs[dA][dD];
+  }
+
+  // Return probabilities for a given number of Attacker and Defender dice
+  getProbsStr(dA: number, dD: number): string[] {
+    return this.probsStr[dA][dD];
   }
 
 

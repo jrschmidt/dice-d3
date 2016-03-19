@@ -8,6 +8,7 @@ var dx = Math.floor(500 / dataSpecs.graphDepth);
 var x0 = Math.floor(dx / 2);
 var dy = Math.floor(300 / dataSpecs.graphHeight);
 
+
 // /// /// /// ///
 var dataText = d3.select('#chartdata')
   .append('p')
@@ -26,7 +27,7 @@ for (i = 0; i< dataNodes.length; i++) {
 for (i = 0; i< dataLines.length; i++) {
   var dataText = d3.select('#chartdata')
   .append('p')
-  .text(dataLines[i].end0[0] + ',' + dataLines[i].end0[1] + '  ' + dataLines[i].end1[0] + ',' + dataLines[i].end1[1] + '  ' + dataLines[i].type + '  ' + dataLines[i].probs);
+  .text(dataLines[i].end0[0] + ',' + dataLines[i].end0[1] + '  ' + dataLines[i].end1[0] + ',' + dataLines[i].end1[1] + '  ' + dataLines[i].type + '  ' + dataLines[i].probsStr);
 }
 // /// /// /// ///
 
@@ -120,4 +121,4 @@ var topCaptions = svg.append('text')
     .style('font', '10px sans-serif')
     .style('font-weight', 'bold')
     .style('color', '#ff3333')
-    .text(function (d) { return d.probs.toString(); });
+    .text(function (d) { return d.probsStr; });
