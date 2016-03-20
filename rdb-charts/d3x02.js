@@ -9,29 +9,6 @@ var x0 = Math.floor(dx / 2);
 var dy = Math.floor(300 / dataSpecs.graphHeight);
 
 
-// /// /// /// ///
-var dataText = d3.select('#chartdata')
-  .append('p')
-  .text('HT: ' + dataSpecs.graphHeight);
-
-dataText = d3.select('#chartdata')
-  .append('p')
-  .text('DP: ' + dataSpecs.graphDepth);
-
-for (i = 0; i< dataNodes.length; i++) {
-  var dataText = d3.select('#chartdata')
-  .append('p')
-  .text(dataNodes[i].type + '  ' + dataNodes[i].att + '  ' + dataNodes[i].def + '  ' + dataNodes[i].loc[0] + ',' + dataNodes[i].loc[1]);
-}
-
-for (i = 0; i< dataLines.length; i++) {
-  var dataText = d3.select('#chartdata')
-  .append('p')
-  .text(dataLines[i].end0[0] + ',' + dataLines[i].end0[1] + '  ' + dataLines[i].end1[0] + ',' + dataLines[i].end1[1] + '  ' + dataLines[i].type + '  ' + dataLines[i].probsStr);
-}
-// /// /// /// ///
-
-
 // SVG
 var svg = d3.select('#chart2')
   .append('svg')
@@ -49,15 +26,17 @@ var topCaptions = svg.append('text')
   .text('Risk-style Dice Battles - Probability Tree Chart');
 
 
-  // Update lines - draw the lines and set mouseover
-  svg.selectAll('line')
+  // Update lines - draw the lines
+
+  // Update lines - draw the diagonal part
+  svg.selectAll('line-diag')
     .data(dataLines)
     .enter()
     .append('line')
-    .attr('class', 'line')
+    .attr('class', 'line-diag')
     .attr('x1', function (d) { return x0 + dx * d.end0[0]; })
     .attr('y1', function (d) { return dy * d.end0[1]; })
-    .attr('x2', function (d) { return x0 + dx * d.end1[0]; })
+    .attr('x2', function (d) { return x0 + dx * (d.end0[0] + 1); })
     .attr('y2', function (d) { return dy * d.end1[1]; })
     .attr('stroke-width', 2)
     .style('stroke', function(d) {
@@ -66,6 +45,23 @@ var topCaptions = svg.append('text')
       if (d.type == 'pwl') {return '#333399';}
     });
 
+
+  // Update lines - draw the straight part
+  svg.selectAll('line-ext')
+    .data(dataLines)
+    .enter()
+    .append('line')
+    .attr('class', 'line-ext')
+    .attr('x1', function (d) { return x0 + dx * (d.end0[0] + 1); })
+    .attr('y1', function (d) { return dy * d.end1[1]; })
+    .attr('x2', function (d) { return x0 + dx * d.end1[0]; })
+    .attr('y2', function (d) { return dy * d.end1[1]; })
+    .attr('stroke-width', 2)
+    .style('stroke', function(d) {
+      if (d.type == 'pw' || d.type == 'pww') {return '#339933';}
+      if (d.type == 'pl' || d.type == 'pll') {return '#993333';}
+      if (d.type == 'pwl') {return '#333399';}
+    });
 
 
   // Update nodes - draw the dot
@@ -113,7 +109,7 @@ var topCaptions = svg.append('text')
     .append('text')
     .attr('class', 'percent-text')
     .attr('x', function (d) {
-      return Math.floor(x0 + dx * (d.end0[0] + d.end1[0]) / 2)
+      return Math.floor(x0 + dx * (d.end0[0] + 0.5) )
     })
     .attr('y', function (d) {
       return Math.floor(dy * (d.end0[1] + d.end1[1]) / 2)

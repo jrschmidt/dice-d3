@@ -619,7 +619,7 @@ class RiskDiceProbabilities {
 
 let chartDataGenerator = new RDBComputeChartData();
 
-let result: ResultObject = chartDataGenerator.computeOdds(5,2);
+let result: ResultObject = chartDataGenerator.computeOdds(4,4);
 
 
 let dataNodes: NodeObject[] = result.nodes;

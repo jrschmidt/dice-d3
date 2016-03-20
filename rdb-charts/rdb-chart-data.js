@@ -424,7 +424,7 @@ var RiskDiceProbabilities = (function () {
     return RiskDiceProbabilities;
 }());
 var chartDataGenerator = new RDBComputeChartData();
-var result = chartDataGenerator.computeOdds(5, 2);
+var result = chartDataGenerator.computeOdds(4, 4);
 var dataNodes = result.nodes;
 var dataLines = result.lines;
 var dataSpecs = {
